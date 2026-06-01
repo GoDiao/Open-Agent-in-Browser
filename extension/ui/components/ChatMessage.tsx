@@ -1,5 +1,5 @@
 import type { ChatMessage as ChatMessageType } from '../../core/types'
-import { Message, MessageContent, MessageToolCall, MessageToolResult } from './ai-elements/message'
+import { Message, MessageContent, MessageResponse, MessageToolCall, MessageToolResult } from './ai-elements/message'
 
 interface Props {
   message: ChatMessageType
@@ -18,10 +18,8 @@ export function ChatMessage({ message, index }: Props) {
       >
         <Message from="tool">
           <MessageContent>
-            <MessageToolResult>
-              {message.content.length > 400
-                ? message.content.slice(0, 400) + '...'
-                : message.content}
+            <MessageToolResult state="completed">
+              {message.content}
             </MessageToolResult>
           </MessageContent>
         </Message>
@@ -36,7 +34,11 @@ export function ChatMessage({ message, index }: Props) {
     >
       <Message from={isUser ? 'user' : 'assistant'}>
         <MessageContent>
-          {message.content || (
+          {isUser ? (
+            message.content
+          ) : message.content ? (
+            <MessageResponse>{message.content}</MessageResponse>
+          ) : (
             <span className="inline-flex items-center gap-1.5 text-muted-foreground">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent-orange animate-pulse" />
               thinking...
