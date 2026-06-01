@@ -10,11 +10,18 @@ export interface ChatState {
   conversationId: string | null
 }
 
+export interface AttachedTab {
+  id: number
+  url: string
+  title: string
+}
+
 export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isStreaming, setIsStreaming] = useState(false)
   const [currentToolCall, setCurrentToolCall] = useState<{ name: string; args: string } | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [attachedTabs, setAttachedTabs] = useState<AttachedTab[]>([])
   const conversationIdRef = useRef<string | null>(null)
 
   // Generate conversation ID on first message
@@ -64,12 +71,24 @@ export function useChat() {
         text,
         history: messages,
         conversationId,
+        tabIds: attachedTabs.map((t) => t.id),
       })
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
       setIsStreaming(false)
     }
-  }, [messages, isStreaming, ensureConversationId])
+  }, [messages, isStreaming, ensureConversationId, attachedTabs])
+
+  const attachTab = useCallback((tab: AttachedTab) => {
+    setAttachedTabs((prev) => {
+      if (prev.some((t) => t.id === tab.id)) return prev
+      return [...prev, tab]
+    })
+  }, [])
+
+  const detachTab = useCallback((tabId: number) => {
+    setAttachedTabs((prev) => prev.filter((t) => t.id !== tabId))
+  }, [])
 
   const stop = useCallback(() => {
     setIsStreaming(false)
@@ -149,7 +168,10 @@ export function useChat() {
     currentToolCall,
     error,
     conversationId: conversationIdRef.current,
+    attachedTabs,
     sendMessage,
+    attachTab,
+    detachTab,
     stop,
     clear,
     loadConversation,

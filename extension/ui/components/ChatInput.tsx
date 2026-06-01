@@ -1,15 +1,17 @@
-import { ArrowUpIcon, SquareIcon } from 'lucide-react'
+import { ArrowUpIcon, SquareIcon, GlobeIcon } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '../../lib/utils'
+import type { AttachedTab } from '../hooks/useChat'
 
 interface Props {
   onSend: (text: string) => void
   disabled: boolean
   onStop: () => void
   isStreaming: boolean
+  attachedTabs?: AttachedTab[]
 }
 
-export function ChatInput({ onSend, disabled, onStop, isStreaming }: Props) {
+export function ChatInput({ onSend, disabled, onStop, isStreaming, attachedTabs }: Props) {
   const [input, setInput] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -21,6 +23,16 @@ export function ChatInput({ onSend, disabled, onStop, isStreaming }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="border-t border-border p-3">
+      {attachedTabs && attachedTabs.length > 0 && (
+        <div className="mb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <GlobeIcon className="h-3 w-3" />
+          <span className="truncate max-w-[260px]">
+            {attachedTabs.length === 1
+              ? attachedTabs[0].title || attachedTabs[0].url
+              : `${attachedTabs.length} tabs attached`}
+          </span>
+        </div>
+      )}
       <div
         className={cn(
           'flex items-center gap-2 rounded-xl border bg-card px-3 py-2.5 transition-colors duration-200',

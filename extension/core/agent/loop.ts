@@ -25,6 +25,7 @@ export interface AgentCallbacks {
   onToolResult: (name: string, result: ToolResult) => void
   onDone: () => void
   onError: (error: string) => void
+  targetTabId?: number
 }
 
 export class AgentLoop {
@@ -133,7 +134,7 @@ export class AgentLoop {
       for (const tc of toolCallsToExecute) {
         callbacks.onToolCall(tc.function.name, tc.function.arguments)
 
-        const result = await this.executeTool(tc)
+        const result = await this.executeTool(tc, callbacks.targetTabId)
 
         callbacks.onToolResult(tc.function.name, result)
 
@@ -154,7 +155,7 @@ export class AgentLoop {
     return newMessages
   }
 
-  private async executeTool(toolCall: ToolCall): Promise<ToolResult> {
+  private async executeTool(toolCall: ToolCall, targetTabId?: number): Promise<ToolResult> {
     const tool = this.registry.get(toolCall.function.name)
     if (!tool) {
       return {
@@ -163,9 +164,12 @@ export class AgentLoop {
       }
     }
 
-    // Get active tab
-    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true })
-    const tabId = activeTab?.id
+    // Get tab ID: use provided targetTabId, or fall back to active tab
+    let tabId = targetTabId
+    if (!tabId) {
+      const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true })
+      tabId = activeTab?.id
+    }
     if (!tabId) {
       return {
         content: [{ type: 'text', text: 'No active tab found' }],

@@ -115,7 +115,7 @@ export interface StreamChunk {
 // ─── Extension Messages ───
 
 export type ExtensionMessage =
-  | { type: 'chat:send'; text: string; history?: ChatMessage[]; conversationId?: string }
+  | { type: 'chat:send'; text: string; history?: ChatMessage[]; conversationId?: string; tabIds?: number[] }
   | { type: 'chat:stream'; chunk: string }
   | { type: 'chat:tool_call'; name: string; args: string }
   | { type: 'chat:tool_result'; name: string; result: ToolResult }
