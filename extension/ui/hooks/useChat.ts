@@ -129,26 +129,34 @@ export function useChat() {
         break
       case 'chat:tool_call':
         setCurrentToolCall({ name: msg.name as string, args: msg.args as string })
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: 'assistant' as const,
-            content: '',
-            tool_calls: [{ id: '', type: 'function' as const, function: { name: msg.name as string, arguments: msg.args as string } }],
-          },
-        ])
+        setMessages((prev) => {
+          const last = prev[prev.length - 1]
+          const newToolCall = { id: crypto.randomUUID(), type: 'function' as const, function: { name: msg.name as string, arguments: msg.args as string } }
+          if (last?.role === 'assistant') {
+            return [
+              ...prev.slice(0, -1),
+              { ...last, tool_calls: [...(last.tool_calls || []), newToolCall] },
+            ]
+          }
+          return [...prev, { role: 'assistant' as const, content: '', tool_calls: [newToolCall] }]
+        })
         break
       case 'chat:tool_result':
         setCurrentToolCall(null)
-        setMessages((prev) => [
-          ...prev,
-          { role: 'tool' as const, content: JSON.stringify(msg.result), tool_call_id: '' },
-        ])
+        setMessages((prev) => {
+          const last = prev[prev.length - 1]
+          if (last?.role === 'assistant') {
+            return [
+              ...prev.slice(0, -1),
+              { ...last, toolResult: JSON.stringify(msg.result) },
+            ]
+          }
+          return prev
+        })
         break
       case 'chat:done':
         setIsStreaming(false)
         setCurrentToolCall(null)
-        // Persist conversation after assistant response completes
         setMessages((prev) => {
           persistConversation(prev)
           return prev
