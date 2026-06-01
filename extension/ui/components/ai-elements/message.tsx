@@ -32,9 +32,11 @@ export const MessageContent = ({
 }: MessageContentProps) => (
   <div
     className={cn(
-      'flex w-fit flex-col gap-2 overflow-hidden text-sm',
-      'group-[.is-user]:ml-auto group-[.is-user]:rounded-md group-[.is-user]:rounded-tr-sm group-[.is-user]:bg-primary group-[.is-user]:px-4 group-[.is-user]:py-2 group-[.is-user]:text-primary-foreground',
-      'group-[.is-assistant]:text-foreground',
+      'flex w-full flex-col gap-1 text-sm font-sans tracking-tight',
+      // 用户发言：无背景，纯文本居右，右对齐，用冷峻的冰晶蓝标识
+      'group-[.is-user]:ml-auto group-[.is-user]:text-right group-[.is-user]:text-primary group-[.is-user]:font-medium',
+      // Agent发言：无背景，纯粹留白，像一页精确打印的数据
+      'group-[.is-assistant]:text-foreground group-[.is-assistant]:pl-1',
       className,
     )}
     {...props}

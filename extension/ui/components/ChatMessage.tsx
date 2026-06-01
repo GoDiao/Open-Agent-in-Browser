@@ -29,9 +29,13 @@ export function ChatMessage({ message, index }: Props) {
 
   return (
     <div
-      className="animate-fade-in-up"
+      className="animate-fade-in-up border-b border-border/30 px-4 py-3 hover:bg-muted/[0.02] transition-colors"
       style={{ animationDelay: `${index * 30}ms` }}
     >
+      {/* 冷淡的身份标签 */}
+      <div className="mb-1 font-mono text-[10px] tracking-widest text-muted-foreground/60 uppercase">
+        {isUser ? '▲ USER' : '▼ IRIS'}
+      </div>
       <Message from={isUser ? 'user' : 'assistant'}>
         <MessageContent>
           {isUser ? (
@@ -40,7 +44,7 @@ export function ChatMessage({ message, index }: Props) {
             <MessageResponse>{message.content}</MessageResponse>
           ) : (
             <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent-orange animate-pulse" />
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
               thinking...
             </span>
           )}

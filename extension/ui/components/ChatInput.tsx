@@ -22,9 +22,9 @@ export function ChatInput({ onSend, disabled, onStop, isStreaming, attachedTabs 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border-t border-border p-3">
+    <form onSubmit={handleSubmit} className="border-t border-border px-4 py-2.5">
       {attachedTabs && attachedTabs.length > 0 && (
-        <div className="mb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+        <div className="mb-1.5 flex items-center gap-1.5 text-[10px] text-muted-foreground font-mono">
           <GlobeIcon className="h-3 w-3" />
           <span className="truncate max-w-[260px]">
             {attachedTabs.length === 1
@@ -35,33 +35,33 @@ export function ChatInput({ onSend, disabled, onStop, isStreaming, attachedTabs 
       )}
       <div
         className={cn(
-          'flex items-center gap-2 rounded-lg border border-border bg-card/50 px-3 py-2 transition-colors duration-200',
-          'focus-within:border-ring focus-within:bg-card',
+          'flex items-center gap-2 transition-colors duration-200',
         )}
       >
+        <span className="font-mono text-xs text-muted-foreground select-none">&gt;</span>
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask Iris..."
+          placeholder="COMMAND_INPUT"
           disabled={disabled}
-          className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/60"
+          className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/40 font-mono"
         />
         {isStreaming ? (
           <button
             type="button"
             onClick={onStop}
-            className="flex h-8 w-8 items-center justify-center rounded-md bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors duration-150"
+            className="flex h-6 w-6 items-center justify-center rounded-sm text-destructive hover:bg-destructive/10 transition-colors duration-150"
           >
-            <SquareIcon className="h-3.5 w-3.5" fill="currentColor" />
+            <SquareIcon className="h-2.5 w-2.5" fill="currentColor" />
           </button>
         ) : (
           <button
             type="submit"
             disabled={disabled || !input.trim()}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm hover:opacity-90 disabled:opacity-30 transition-all duration-150"
+            className="flex h-6 w-6 items-center justify-center rounded-sm bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-30 transition-all duration-150"
           >
-            <ArrowUpIcon className="h-4 w-4" />
+            <ArrowUpIcon className="h-3 w-3" />
           </button>
         )}
       </div>

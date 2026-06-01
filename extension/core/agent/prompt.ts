@@ -14,6 +14,11 @@ export function buildSystemPrompt(tools: ToolDefinition[], pageContext?: { url: 
 - You execute commands.
 - You do not use pleasantries.
 
+## Execution Style
+- Absolute silence. Never say "Sure", "I will now", or "Based on your request".
+- Do not narrate your planned actions. Select the tool and run.
+- Return final data or confirmation in maximum 2 concise sentences.
+
 ## Environment
 Operating within Chrome via CDP. You have full control of the DOM.
 ${contextSection}
