@@ -5,6 +5,12 @@ import type { ChatMessage, ExtensionMessage } from '../core/types'
 let agent: AgentLoop | null = null
 let activeConversationId: string | null = null
 
+function sendToUI(message: Record<string, unknown>) {
+  chrome.runtime.sendMessage(message).catch(() => {
+    // Sidepanel not open — ignore
+  })
+}
+
 async function getAgent(): Promise<AgentLoop> {
   if (!agent) {
     const config = await getConfig()
@@ -35,7 +41,7 @@ function setupMessageListener() {
               if (msg.message) {
                 // Delay slightly to let sidepanel initialize
                 setTimeout(() => {
-                  chrome.runtime.sendMessage({
+                  sendToUI({
                     type: 'sidepanel:action',
                     message: msg.message,
                     conversationId: msg.conversationId,
@@ -58,24 +64,24 @@ async function handleChatMessage(text: string, history: ChatMessage[]) {
 
     await agentLoop.run(text, history, {
       onStream: (chunk) => {
-        chrome.runtime.sendMessage({ type: 'chat:stream', chunk })
+        sendToUI({ type: 'chat:stream', chunk })
       },
       onToolCall: (name, args) => {
-        chrome.runtime.sendMessage({ type: 'chat:tool_call', name, args })
+        sendToUI({ type: 'chat:tool_call', name, args })
       },
       onToolResult: (name, result) => {
-        chrome.runtime.sendMessage({ type: 'chat:tool_result', name, result })
+        sendToUI({ type: 'chat:tool_result', name, result })
       },
       onDone: () => {
-        chrome.runtime.sendMessage({ type: 'chat:done' })
+        sendToUI({ type: 'chat:done' })
       },
       onError: (error) => {
-        chrome.runtime.sendMessage({ type: 'chat:error', error })
+        sendToUI({ type: 'chat:error', error })
       },
     })
   } catch (err) {
     const error = err instanceof Error ? err.message : String(err)
-    chrome.runtime.sendMessage({ type: 'chat:error', error })
+    sendToUI({ type: 'chat:error', error })
   }
 }
 
