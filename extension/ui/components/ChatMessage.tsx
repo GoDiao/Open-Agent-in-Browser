@@ -1,5 +1,5 @@
 import type { ChatMessage as ChatMessageType } from '../../core/types'
-import { MessageToolCall, MessageToolResult } from './ai-elements/message'
+import { MessageToolCall, MessageToolResult, MessageResponse } from './ai-elements/message'
 import { cn } from '../../lib/utils'
 
 interface Props {
@@ -54,7 +54,7 @@ export function ChatMessage({ message, index }: Props) {
 
             {/* 文本内容 */}
             {message.content ? (
-              <div>{message.content}</div>
+              <MessageResponse>{message.content}</MessageResponse>
             ) : hasToolCalls ? (
               <span className="inline-flex items-center gap-1.5 text-muted-foreground">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
