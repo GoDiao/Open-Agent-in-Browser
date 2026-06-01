@@ -1,8 +1,10 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { ChatLayout } from '../../ui/components/ChatLayout'
+import { Settings } from '../../ui/components/Settings'
 import { useChat } from '../../ui/hooks/useChat'
 
 export function App() {
+  const [view, setView] = useState<'chat' | 'settings'>('chat')
   const {
     messages,
     isStreaming,
@@ -22,6 +24,10 @@ export function App() {
     return () => chrome.runtime.onMessage.removeListener(listener)
   }, [handleBackgroundMessage])
 
+  if (view === 'settings') {
+    return <Settings onClose={() => setView('chat')} />
+  }
+
   return (
     <ChatLayout
       messages={messages}
@@ -31,6 +37,7 @@ export function App() {
       onSend={sendMessage}
       onStop={stop}
       onClear={clear}
+      onOpenSettings={() => setView('settings')}
     />
   )
 }
