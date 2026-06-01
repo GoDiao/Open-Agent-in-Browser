@@ -74,7 +74,7 @@ export class AgentLoop {
     callbacks: AgentCallbacks,
     signal?: AbortSignal,
   ): Promise<ChatMessage[]> {
-    const systemPrompt = buildSystemPrompt(this.registry.all())
+    const systemPrompt = buildSystemPrompt(this.registry.getEnabled())
     const messages: ChatMessage[] = [
       { role: 'system', content: systemPrompt },
       ...history,
@@ -85,7 +85,7 @@ export class AgentLoop {
       { role: 'user', content: userMessage },
     ]
 
-    const tools = this.registry.all().map((t) => toolToJsonSchema(t))
+    const tools = this.registry.getEnabled().map((t) => toolToJsonSchema(t))
 
     let maxIterations = 20 // Safety limit
 
