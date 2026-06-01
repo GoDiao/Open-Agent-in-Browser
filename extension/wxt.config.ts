@@ -25,6 +25,9 @@ export default defineConfig({
     side_panel: {
       default_path: 'sidepanel.html',
     },
+    chrome_url_overrides: {
+      newtab: 'newtab.html',
+    },
   },
   vite: () => ({
     plugins: [tailwindcss()],
