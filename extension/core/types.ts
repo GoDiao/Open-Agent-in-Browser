@@ -127,10 +127,13 @@ export type ExtensionMessage =
 
 // ─── Storage Schema ───
 
+export type ThemeId = 'cyber-obsidian' | 'industrial-bauhaus' | 'analog-laboratory'
+
 export interface StorageConfig {
   endpoint: string
   apiKey: string
   model: string
+  theme?: ThemeId
 }
 
 export interface Conversation {

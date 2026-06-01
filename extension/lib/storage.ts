@@ -1,4 +1,4 @@
-import type { Conversation, StorageConfig } from '../core/types'
+import type { Conversation, StorageConfig, ThemeId } from '../core/types'
 
 const DEFAULT_CONFIG: StorageConfig = {
   endpoint: 'https://api.openai.com/v1',
@@ -38,4 +38,18 @@ export async function deleteConversation(id: string): Promise<void> {
   await chrome.storage.local.set({
     conversations: conversations.filter((c) => c.id !== id),
   })
+}
+
+export async function getTheme(): Promise<ThemeId> {
+  const result = await chrome.storage.local.get('theme')
+  return (result.theme as ThemeId) || 'cyber-obsidian'
+}
+
+export async function setTheme(theme: ThemeId): Promise<void> {
+  await chrome.storage.local.set({ theme })
+  document.documentElement.setAttribute('data-theme', theme)
+}
+
+export function applyTheme(theme: ThemeId): void {
+  document.documentElement.setAttribute('data-theme', theme)
 }

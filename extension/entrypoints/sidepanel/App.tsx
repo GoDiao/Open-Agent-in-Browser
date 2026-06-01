@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { ChatLayout } from '../../ui/components/ChatLayout'
 import { Settings } from '../../ui/components/Settings'
 import { useChat } from '../../ui/hooks/useChat'
+import { getTheme, applyTheme } from '../../lib/storage'
 
 export function App() {
   const [view, setView] = useState<'chat' | 'settings'>('chat')
@@ -15,6 +16,11 @@ export function App() {
     clear,
     handleBackgroundMessage,
   } = useChat()
+
+  // Apply theme on mount
+  useEffect(() => {
+    getTheme().then(applyTheme)
+  }, [])
 
   useEffect(() => {
     const listener = (msg: { type: string; [key: string]: unknown }) => {

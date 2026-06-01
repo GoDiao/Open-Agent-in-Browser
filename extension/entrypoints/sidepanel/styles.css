@@ -1,55 +1,166 @@
 @import "tailwindcss";
 
-/* ── Iris Design Tokens ── */
+/* ══════════════════════════════════════════════════════════════
+   Iris Theme System — 3 Selectable Themes
+   Applied via data-theme attribute on <html>
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Theme 1: Cyber Obsidian (Default) ── */
+/* 意象：黑客帝国精密监控终端，冷酷锋利 */
 :root {
-  --radius: 2px;
-
-  /* Light Mode - Warm Paper */
-  --background: oklch(0.975 0.003 80);
-  --foreground: oklch(0.32 0.01 250);
-  --card: oklch(0.99 0.001 80);
-  --card-foreground: oklch(0.32 0.01 250);
-  --popover: oklch(0.99 0.001 80);
-  --popover-foreground: oklch(0.32 0.01 250);
-  --primary: oklch(0.50 0.07 250);
-  --primary-foreground: oklch(0.98 0.001 80);
-  --secondary: oklch(0.955 0.004 80);
-  --secondary-foreground: oklch(0.42 0.01 250);
-  --muted: oklch(0.955 0.004 80);
-  --muted-foreground: oklch(0.55 0.008 250);
-  --accent: oklch(0.955 0.004 80);
-  --accent-foreground: oklch(0.32 0.01 250);
+  --radius: 0px;
+  --background: oklch(0.99 0.002 200);
+  --foreground: oklch(0.2 0.005 200);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.2 0.005 200);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.2 0.005 200);
+  --primary: oklch(0.78 0.14 190);
+  --primary-foreground: oklch(0.12 0.002 200);
+  --secondary: oklch(0.97 0.002 200);
+  --secondary-foreground: oklch(0.35 0.005 200);
+  --muted: oklch(0.97 0.002 200);
+  --muted-foreground: oklch(0.55 0.005 200);
+  --accent: oklch(0.97 0.002 200);
+  --accent-foreground: oklch(0.2 0.005 200);
   --destructive: oklch(0.55 0.18 25);
-  --destructive-foreground: oklch(0.98 0.001 80);
-  --border: oklch(0.91 0.005 80);
-  --input: oklch(0.91 0.005 80);
-  --ring: oklch(0.50 0.07 250);
-  --accent-orange: oklch(0.50 0.07 250);
-  --accent-orange-bright: oklch(0.60 0.09 250);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.93 0.002 200);
+  --input: oklch(0.93 0.002 200);
+  --ring: oklch(0.78 0.14 190);
+  --accent-orange: oklch(0.78 0.14 190);
+  --accent-orange-bright: oklch(0.85 0.16 190);
+  --glow-color: oklch(0.78 0.14 190 / 0.15);
 }
 
-.dark {
-  /* Dark Mode - Rich Charcoal */
-  --background: oklch(0.155 0.008 250);
-  --foreground: oklch(0.88 0.006 80);
-  --card: oklch(0.185 0.008 250);
-  --card-foreground: oklch(0.88 0.006 80);
-  --popover: oklch(0.185 0.008 250);
-  --popover-foreground: oklch(0.88 0.006 80);
-  --primary: oklch(0.68 0.09 250);
-  --primary-foreground: oklch(0.155 0.008 250);
-  --secondary: oklch(0.22 0.008 250);
-  --secondary-foreground: oklch(0.88 0.006 80);
-  --muted: oklch(0.22 0.008 250);
-  --muted-foreground: oklch(0.60 0.01 250);
-  --accent: oklch(0.22 0.008 250);
-  --accent-foreground: oklch(0.88 0.006 80);
+:root.dark {
+  --background: oklch(0.12 0.002 200);
+  --foreground: oklch(0.95 0 0);
+  --card: oklch(0.15 0.002 200);
+  --card-foreground: oklch(0.95 0 0);
+  --popover: oklch(0.15 0.002 200);
+  --popover-foreground: oklch(0.95 0 0);
+  --primary: oklch(0.78 0.14 190);
+  --primary-foreground: oklch(0.12 0.002 200);
+  --secondary: oklch(0.2 0.002 200);
+  --secondary-foreground: oklch(0.9 0 0);
+  --muted: oklch(0.2 0.002 200);
+  --muted-foreground: oklch(0.6 0.005 200);
+  --accent: oklch(0.2 0.002 200);
+  --accent-foreground: oklch(0.95 0 0);
   --destructive: oklch(0.65 0.18 25);
-  --destructive-foreground: oklch(0.88 0.006 80);
-  --border: oklch(0.25 0.008 250);
-  --input: oklch(0.25 0.008 250);
-  --ring: oklch(0.68 0.09 250);
+  --destructive-foreground: oklch(0.95 0 0);
+  --border: oklch(0.25 0.002 200);
+  --input: oklch(0.25 0.002 200);
+  --ring: oklch(0.78 0.14 190);
+  --glow-color: oklch(0.78 0.14 190 / 0.2);
 }
+
+/* ── Theme 2: Industrial Bauhaus ── */
+/* 意象：现代建筑设计画册，德系精密工业测温仪 */
+[data-theme="industrial-bauhaus"] {
+  --radius: 4px;
+  --background: oklch(0.96 0.005 90);
+  --foreground: oklch(0.15 0.005 90);
+  --card: oklch(0.98 0.002 90);
+  --card-foreground: oklch(0.15 0.005 90);
+  --popover: oklch(0.98 0.002 90);
+  --popover-foreground: oklch(0.15 0.005 90);
+  --primary: oklch(0.62 0.12 45);
+  --primary-foreground: oklch(0.98 0.002 90);
+  --secondary: oklch(0.94 0.003 90);
+  --secondary-foreground: oklch(0.3 0.005 90);
+  --muted: oklch(0.94 0.003 90);
+  --muted-foreground: oklch(0.5 0.005 90);
+  --accent: oklch(0.94 0.003 90);
+  --accent-foreground: oklch(0.15 0.005 90);
+  --destructive: oklch(0.55 0.18 25);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.88 0.005 90);
+  --input: oklch(0.88 0.005 90);
+  --ring: oklch(0.62 0.12 45);
+  --accent-orange: oklch(0.62 0.12 45);
+  --accent-orange-bright: oklch(0.72 0.14 45);
+  --glow-color: oklch(0.62 0.12 45 / 0.1);
+}
+
+[data-theme="industrial-bauhaus"].dark {
+  --background: oklch(0.18 0.005 90);
+  --foreground: oklch(0.9 0.002 90);
+  --card: oklch(0.22 0.005 90);
+  --card-foreground: oklch(0.9 0.002 90);
+  --popover: oklch(0.22 0.005 90);
+  --popover-foreground: oklch(0.9 0.002 90);
+  --primary: oklch(0.68 0.14 45);
+  --primary-foreground: oklch(0.18 0.005 90);
+  --secondary: oklch(0.26 0.005 90);
+  --secondary-foreground: oklch(0.85 0.002 90);
+  --muted: oklch(0.26 0.005 90);
+  --muted-foreground: oklch(0.6 0.005 90);
+  --accent: oklch(0.26 0.005 90);
+  --accent-foreground: oklch(0.9 0.002 90);
+  --destructive: oklch(0.65 0.18 25);
+  --destructive-foreground: oklch(0.9 0 0);
+  --border: oklch(0.3 0.005 90);
+  --input: oklch(0.3 0.005 90);
+  --ring: oklch(0.68 0.14 45);
+  --glow-color: oklch(0.68 0.14 45 / 0.15);
+}
+
+/* ── Theme 3: Analog Laboratory ── */
+/* 意象：高端音频工程混合器，流体控制台，水银般丝滑 */
+[data-theme="analog-laboratory"] {
+  --radius: 6px;
+  --background: oklch(0.965 0.003 140);
+  --foreground: oklch(0.25 0.008 140);
+  --card: oklch(0.99 0.001 140);
+  --card-foreground: oklch(0.25 0.008 140);
+  --popover: oklch(0.99 0.001 140);
+  --popover-foreground: oklch(0.25 0.008 140);
+  --primary: oklch(0.72 0.08 140);
+  --primary-foreground: oklch(0.14 0.006 140);
+  --secondary: oklch(0.94 0.004 140);
+  --secondary-foreground: oklch(0.4 0.008 140);
+  --muted: oklch(0.94 0.004 140);
+  --muted-foreground: oklch(0.52 0.008 140);
+  --accent: oklch(0.94 0.004 140);
+  --accent-foreground: oklch(0.25 0.008 140);
+  --destructive: oklch(0.55 0.18 25);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.90 0.005 140);
+  --input: oklch(0.90 0.005 140);
+  --ring: oklch(0.72 0.08 140);
+  --accent-orange: oklch(0.72 0.08 140);
+  --accent-orange-bright: oklch(0.80 0.10 140);
+  --glow-color: oklch(0.72 0.08 140 / 0.1);
+}
+
+[data-theme="analog-laboratory"].dark {
+  --background: oklch(0.14 0.006 140);
+  --foreground: oklch(0.85 0.005 140);
+  --card: oklch(0.17 0.006 140);
+  --card-foreground: oklch(0.85 0.005 140);
+  --popover: oklch(0.17 0.006 140);
+  --popover-foreground: oklch(0.85 0.005 140);
+  --primary: oklch(0.72 0.08 140);
+  --primary-foreground: oklch(0.14 0.006 140);
+  --secondary: oklch(0.20 0.006 140);
+  --secondary-foreground: oklch(0.80 0.005 140);
+  --muted: oklch(0.20 0.006 140);
+  --muted-foreground: oklch(0.55 0.008 140);
+  --accent: oklch(0.20 0.006 140);
+  --accent-foreground: oklch(0.85 0.005 140);
+  --destructive: oklch(0.65 0.18 25);
+  --destructive-foreground: oklch(0.85 0 0);
+  --border: oklch(0.24 0.006 140);
+  --input: oklch(0.24 0.006 140);
+  --ring: oklch(0.72 0.08 140);
+  --glow-color: oklch(0.72 0.08 140 / 0.2);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Tailwind Color Mapping
+   ══════════════════════════════════════════════════════════════ */
 
 @theme inline {
   --font-sans: "Inter Tight", "-apple-system", "BlinkMacSystemFont", "Segoe UI", system-ui, sans-serif;
@@ -74,41 +185,80 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --radius-sm: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
-  --radius-xl: 0px;
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius);
+  --radius-xl: var(--radius);
   --color-accent-orange: var(--accent-orange);
   --color-accent-orange-bright: var(--accent-orange-bright);
 }
+
+/* ══════════════════════════════════════════════════════════════
+   Animations & Utilities
+   ══════════════════════════════════════════════════════════════ */
 
 @layer utilities {
   .hairline-border {
     border: 1px solid var(--border);
   }
 
+  /* Cyber Obsidian: Hard blink cursor */
   @keyframes flare {
     0%, 49% { opacity: 1; }
     50%, 100% { opacity: 0; }
   }
 
+  /* Default: smooth mechanical */
   .animate-mechanical-in {
     animation: mechanicalIn 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   }
-
   .animate-mechanical-out {
     animation: mechanicalOut 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   }
-
   @keyframes mechanicalIn {
     from { opacity: 0; transform: translateY(4px); }
     to { opacity: 1; transform: translateY(0); }
   }
-
   @keyframes mechanicalOut {
     from { opacity: 1; transform: translateY(0); }
     to { opacity: 0; transform: translateY(4px); }
   }
+
+  /* Bauhaus: Hard Snap — zero animation */
+  [data-theme="industrial-bauhaus"] .animate-mechanical-in {
+    animation: none;
+    opacity: 1;
+  }
+  [data-theme="industrial-bauhaus"] .animate-fade-in-up {
+    animation: none;
+    opacity: 1;
+  }
+  [data-theme="industrial-bauhaus"] .animate-fade-in {
+    animation: none;
+    opacity: 1;
+  }
+
+  /* Analog Laboratory: Blur fade-in (mercury condensation) */
+  [data-theme="analog-laboratory"] .animate-mechanical-in {
+    animation: analogFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+  @keyframes analogFadeIn {
+    from { opacity: 0; filter: blur(4px); transform: translateY(2px); }
+    to { opacity: 1; filter: blur(0); transform: translateY(0); }
+  }
+
+  /* Analog: Pulse waveform for tool execution */
+  @keyframes pulse-wave {
+    0%, 100% { transform: scaleY(0.3); }
+    50% { transform: scaleY(1); }
+  }
+  .animate-pulse-wave {
+    animation: pulse-wave 0.6s ease-in-out infinite;
+  }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   Base Layer
+   ══════════════════════════════════════════════════════════════ */
 
 @layer base {
   * {
@@ -124,7 +274,7 @@
     position: relative;
   }
 
-  /* The Magic of Grain */
+  /* Film Grain Texture */
   body::before {
     content: "";
     position: fixed;
@@ -134,13 +284,26 @@
     height: 100%;
     pointer-events: none;
     z-index: 9999;
-    opacity: 0.035;
+    opacity: 0.03;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     mix-blend-mode: overlay;
   }
+
+  /* Bauhaus: reduce grain */
+  [data-theme="industrial-bauhaus"] body::before {
+    opacity: 0.015;
+  }
+
+  /* Analog: no grain (fluid glass feel) */
+  [data-theme="analog-laboratory"] body::before {
+    display: none;
+  }
 }
 
-/* ── Scrollbar ── */
+/* ══════════════════════════════════════════════════════════════
+   Scrollbar
+   ══════════════════════════════════════════════════════════════ */
+
 .styled-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: oklch(from var(--muted-foreground) l c h / 0.15) transparent;
@@ -161,72 +324,43 @@
   background: oklch(from var(--muted-foreground) l c h / 0.3);
 }
 
-/* ── Animations ── */
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* ══════════════════════════════════════════════════════════════
+   Shared Animations
+   ══════════════════════════════════════════════════════════════ */
 
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-
 @keyframes slide-in-from-top-2 {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes collapsible-down {
-  from {
-    height: 0;
-    opacity: 0;
-  }
-  to {
-    height: var(--radix-collapsible-content-height);
-    opacity: 1;
-  }
+  from { height: 0; opacity: 0; }
+  to { height: var(--radix-collapsible-content-height); opacity: 1; }
 }
-
 @keyframes collapsible-up {
-  from {
-    height: var(--radix-collapsible-content-height);
-    opacity: 1;
-  }
-  to {
-    height: 0;
-    opacity: 0;
-  }
+  from { height: var(--radix-collapsible-content-height); opacity: 1; }
+  to { height: 0; opacity: 0; }
 }
 
 .animate-fade-in-up {
   animation: fade-in-up 0.3s ease-out forwards;
 }
-
 .animate-fade-in {
   animation: fade-in 0.2s ease-out forwards;
 }
-
 .animate-slide-in-from-top-2 {
   animation: slide-in-from-top-2 0.2s ease-out forwards;
 }
-
 .animate-collapsible-down {
   animation: collapsible-down 0.2s ease-out;
 }
-
 .animate-collapsible-up {
   animation: collapsible-up 0.2s ease-out;
 }
