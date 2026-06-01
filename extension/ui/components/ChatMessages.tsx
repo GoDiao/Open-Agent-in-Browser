@@ -17,7 +17,7 @@ export function ChatMessages({ messages, onSuggestionClick }: Props) {
           <Sparkles className="h-7 w-7 text-accent-orange" />
         </div>
         <h2 className="mb-1 font-semibold text-lg text-foreground">
-          Browser Agent
+          Iris
         </h2>
         <p className="max-w-[200px] text-muted-foreground text-xs mb-6">
           I can navigate, click, fill forms, take screenshots, and automate your browser.
