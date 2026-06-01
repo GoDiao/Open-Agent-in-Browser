@@ -75,7 +75,18 @@ export class AgentLoop {
     callbacks: AgentCallbacks,
     signal?: AbortSignal,
   ): Promise<ChatMessage[]> {
-    const systemPrompt = buildSystemPrompt(this.registry.getEnabled())
+    // Fetch active tab context for the system prompt
+    let pageContext: { url: string; title: string } | undefined
+    try {
+      const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true })
+      if (activeTab?.url) {
+        pageContext = { url: activeTab.url, title: activeTab.title || '' }
+      }
+    } catch {
+      // Ignore errors fetching tab context
+    }
+
+    const systemPrompt = buildSystemPrompt(this.registry.getEnabled(), pageContext)
     const messages: ChatMessage[] = [
       { role: 'system', content: systemPrompt },
       ...history,
