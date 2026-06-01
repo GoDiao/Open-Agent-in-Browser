@@ -22,9 +22,9 @@ export function ChatInput({ onSend, disabled, onStop, isStreaming, attachedTabs 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border-t border-border px-4 py-2.5">
+    <form onSubmit={handleSubmit} className="flex items-center h-10 border-t border-primary/10 bg-background/50 backdrop-blur-sm px-4">
       {attachedTabs && attachedTabs.length > 0 && (
-        <div className="mb-1.5 flex items-center gap-1.5 text-[10px] text-muted-foreground font-mono">
+        <div className="absolute bottom-12 left-4 flex items-center gap-1.5 text-[10px] text-muted-foreground font-mono bg-card/80 px-2 py-1 rounded">
           <GlobeIcon className="h-3 w-3" />
           <span className="truncate max-w-[260px]">
             {attachedTabs.length === 1
@@ -35,17 +35,17 @@ export function ChatInput({ onSend, disabled, onStop, isStreaming, attachedTabs 
       )}
       <div
         className={cn(
-          'flex items-center gap-2 transition-colors duration-200',
+          'flex items-center gap-2 w-full transition-colors duration-200',
         )}
       >
-        <span className="font-mono text-xs text-muted-foreground select-none">&gt;</span>
+        <span className="font-mono text-primary mr-2 animate-pulse select-none">▶</span>
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="COMMAND_INPUT"
           disabled={disabled}
-          className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/40 font-mono"
+          className="flex-1 bg-transparent text-sm font-mono text-foreground outline-none placeholder:text-muted-foreground/30"
         />
         {isStreaming ? (
           <button

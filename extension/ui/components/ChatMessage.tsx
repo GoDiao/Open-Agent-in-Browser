@@ -1,5 +1,6 @@
 import type { ChatMessage as ChatMessageType } from '../../core/types'
 import { Message, MessageContent, MessageResponse, MessageToolCall, MessageToolResult } from './ai-elements/message'
+import { cn } from '../../lib/utils'
 
 interface Props {
   message: ChatMessageType
@@ -29,27 +30,32 @@ export function ChatMessage({ message, index }: Props) {
 
   return (
     <div
-      className="animate-fade-in-up border-b border-border/30 px-4 py-3 hover:bg-muted/[0.02] transition-colors"
+      className="group flex w-full flex-col py-3 px-4 hover:bg-primary/[0.02] transition-colors duration-150 border-b border-border/20 animate-mechanical-in"
       style={{ animationDelay: `${index * 30}ms` }}
     >
-      {/* 冷淡的身份标签 */}
-      <div className="mb-1 font-mono text-[10px] tracking-widest text-muted-foreground/60 uppercase">
-        {isUser ? '▲ USER' : '▼ IRIS'}
+      {/* 侧边栏式的时间戳/角色标识 */}
+      <div className="flex justify-between items-baseline mb-1">
+        <span className="font-mono text-[10px] tracking-widest text-primary uppercase">
+          {isUser ? 'USER_CMD' : 'IRIS_CORE'}
+        </span>
       </div>
-      <Message from={isUser ? 'user' : 'assistant'}>
-        <MessageContent>
-          {isUser ? (
-            message.content
-          ) : message.content ? (
-            <MessageResponse>{message.content}</MessageResponse>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-              thinking...
-            </span>
-          )}
-        </MessageContent>
-      </Message>
+
+      {/* 内容体 */}
+      <div className={cn(
+        "text-sm leading-relaxed pl-2 border-l-2",
+        isUser ? "text-primary font-medium border-primary/30" : "text-foreground border-transparent"
+      )}>
+        {isUser ? (
+          message.content
+        ) : message.content ? (
+          <MessageResponse>{message.content}</MessageResponse>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            thinking...
+          </span>
+        )}
+      </div>
     </div>
   )
 }
