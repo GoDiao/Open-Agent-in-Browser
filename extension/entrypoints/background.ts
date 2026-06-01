@@ -19,10 +19,32 @@ async function getAgent(): Promise<AgentLoop> {
 // Handle messages from UI
 function setupMessageListener() {
   chrome.runtime.onMessage.addListener(
-    (message: ExtensionMessage, _sender, sendResponse) => {
+    (message: ExtensionMessage | { type: string; [key: string]: unknown }, _sender, sendResponse) => {
       if (message.type === 'chat:send') {
-        activeConversationId = message.conversationId || null
-        handleChatMessage(message.text, message.history || [])
+        const chatMsg = message as Extract<ExtensionMessage, { type: 'chat:send' }>
+        activeConversationId = chatMsg.conversationId || null
+        handleChatMessage(chatMsg.text, chatMsg.history || [])
+        sendResponse({ ok: true })
+      } else if (message.type === 'open-sidepanel') {
+        const msg = message as { type: 'open-sidepanel'; message?: string; conversationId?: string }
+        // Open the sidepanel on the active tab, then optionally send a message
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          const tab = tabs[0]
+          if (tab?.id) {
+            chrome.sidePanel.open({ tabId: tab.id }).then(() => {
+              if (msg.message) {
+                // Delay slightly to let sidepanel initialize
+                setTimeout(() => {
+                  chrome.runtime.sendMessage({
+                    type: 'sidepanel:action',
+                    message: msg.message,
+                    conversationId: msg.conversationId,
+                  })
+                }, 300)
+              }
+            })
+          }
+        })
         sendResponse({ ok: true })
       }
       return true // Keep message channel open
