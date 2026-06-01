@@ -13,23 +13,26 @@ export function ChatMessage({ message, index }: Props) {
 
   return (
     <div
-      className="group flex w-full flex-col py-3 px-4 hover:bg-primary/[0.02] transition-colors duration-150 border-b border-border/20 animate-mechanical-in"
+      className="group flex w-full flex-col py-3.5 px-4 hover:bg-muted/30 transition-colors duration-200 border-b border-border/30 animate-mechanical-in"
       style={{ animationDelay: `${index * 30}ms` }}
     >
       {/* 角色标识 */}
-      <div className="flex justify-between items-baseline mb-1">
-        <span className="font-mono text-[10px] tracking-widest text-primary uppercase">
-          {isUser ? 'USER_CMD' : 'IRIS_CORE'}
+      <div className="flex items-center gap-2 mb-1.5">
+        <span className={cn(
+          "text-[10px] font-medium tracking-wide uppercase",
+          isUser ? "text-muted-foreground/50" : "text-primary/60"
+        )}>
+          {isUser ? 'You' : 'Iris'}
         </span>
       </div>
 
       {/* 内容体 */}
       <div className={cn(
-        "text-sm leading-relaxed pl-2 border-l-2 space-y-2",
-        isUser ? "text-primary font-medium border-primary/30" : "text-foreground border-transparent"
+        "text-[13px] leading-[1.65] space-y-2.5",
+        isUser ? "text-foreground/80" : "text-foreground"
       )}>
         {isUser ? (
-          message.content
+          <p>{message.content}</p>
         ) : (
           <>
             {/* 工具调用状态 */}
@@ -56,13 +59,13 @@ export function ChatMessage({ message, index }: Props) {
             {message.content ? (
               <MessageResponse>{message.content}</MessageResponse>
             ) : hasToolCalls ? (
-              <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              <span className="inline-flex items-center gap-1.5 text-muted-foreground/60 text-xs">
+                <span className="inline-block h-1 w-1 rounded-full bg-primary/50 animate-pulse" />
                 executing...
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              <span className="inline-flex items-center gap-1.5 text-muted-foreground/60 text-xs">
+                <span className="inline-block h-1 w-1 rounded-full bg-primary/50 animate-pulse" />
                 thinking...
               </span>
             )}

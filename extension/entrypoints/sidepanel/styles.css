@@ -1,55 +1,54 @@
 @import "tailwindcss";
 
-/* ── BrowserOS-aligned Design Tokens ── */
+/* ── Iris Design Tokens ── */
 :root {
-  --radius: 0px; /* Absolute直角 */
+  --radius: 2px;
 
-  /* Light Mode - Glacial White */
-  --background: oklch(0.99 0.005 240);
-  --foreground: oklch(0.2 0.015 240);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.015 240);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.015 240);
-  --primary: oklch(0.6 0.16 230); /* Ice Blue */
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.98 0.005 240);
-  --secondary-foreground: oklch(0.4 0.015 240);
-  --muted: oklch(0.98 0.005 240);
-  --muted-foreground: oklch(0.55 0.015 240);
-  --accent: oklch(0.98 0.005 240);
-  --accent-foreground: oklch(0.2 0.015 240);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.92 0.005 240);
-  --input: oklch(0.92 0.005 240);
-  --ring: oklch(0.6 0.16 230);
-  /* BrowserOS accent orange - Replaced with Ice Blue */
-  --accent-orange: oklch(0.6 0.16 230);
-  --accent-orange-bright: oklch(0.7 0.18 230);
+  /* Light Mode - Warm Paper */
+  --background: oklch(0.975 0.003 80);
+  --foreground: oklch(0.32 0.01 250);
+  --card: oklch(0.99 0.001 80);
+  --card-foreground: oklch(0.32 0.01 250);
+  --popover: oklch(0.99 0.001 80);
+  --popover-foreground: oklch(0.32 0.01 250);
+  --primary: oklch(0.50 0.07 250);
+  --primary-foreground: oklch(0.98 0.001 80);
+  --secondary: oklch(0.955 0.004 80);
+  --secondary-foreground: oklch(0.42 0.01 250);
+  --muted: oklch(0.955 0.004 80);
+  --muted-foreground: oklch(0.55 0.008 250);
+  --accent: oklch(0.955 0.004 80);
+  --accent-foreground: oklch(0.32 0.01 250);
+  --destructive: oklch(0.55 0.18 25);
+  --destructive-foreground: oklch(0.98 0.001 80);
+  --border: oklch(0.91 0.005 80);
+  --input: oklch(0.91 0.005 80);
+  --ring: oklch(0.50 0.07 250);
+  --accent-orange: oklch(0.50 0.07 250);
+  --accent-orange-bright: oklch(0.60 0.09 250);
 }
 
 .dark {
-  /* Dark Mode - Deep Void */
-  --background: oklch(0.1 0.01 240);
-  --foreground: oklch(0.95 0.005 240);
-  --card: oklch(0.13 0.01 240);
-  --card-foreground: oklch(0.95 0.005 240);
-  --popover: oklch(0.13 0.01 240);
-  --popover-foreground: oklch(0.95 0.005 240);
-  --primary: oklch(0.78 0.16 195); /* Laser Cyan */
-  --primary-foreground: oklch(0.1 0.01 240);
-  --secondary: oklch(0.2 0.01 240);
-  --secondary-foreground: oklch(0.95 0.005 240);
-  --muted: oklch(0.2 0.01 240);
-  --muted-foreground: oklch(0.65 0.015 240);
-  --accent: oklch(0.2 0.01 240);
-  --accent-foreground: oklch(0.95 0.005 240);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.95 0.005 240);
-  --border: oklch(0.2 0.01 240);
-  --input: oklch(0.2 0.01 240);
-  --ring: oklch(0.78 0.16 195);
+  /* Dark Mode - Rich Charcoal */
+  --background: oklch(0.155 0.008 250);
+  --foreground: oklch(0.88 0.006 80);
+  --card: oklch(0.185 0.008 250);
+  --card-foreground: oklch(0.88 0.006 80);
+  --popover: oklch(0.185 0.008 250);
+  --popover-foreground: oklch(0.88 0.006 80);
+  --primary: oklch(0.68 0.09 250);
+  --primary-foreground: oklch(0.155 0.008 250);
+  --secondary: oklch(0.22 0.008 250);
+  --secondary-foreground: oklch(0.88 0.006 80);
+  --muted: oklch(0.22 0.008 250);
+  --muted-foreground: oklch(0.60 0.01 250);
+  --accent: oklch(0.22 0.008 250);
+  --accent-foreground: oklch(0.88 0.006 80);
+  --destructive: oklch(0.65 0.18 25);
+  --destructive-foreground: oklch(0.88 0.006 80);
+  --border: oklch(0.25 0.008 250);
+  --input: oklch(0.25 0.008 250);
+  --ring: oklch(0.68 0.09 250);
 }
 
 @theme inline {
@@ -93,21 +92,21 @@
   }
 
   .animate-mechanical-in {
-    animation: mechanicalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: mechanicalIn 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   }
 
   .animate-mechanical-out {
-    animation: mechanicalOut 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: mechanicalOut 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   }
 
   @keyframes mechanicalIn {
-    from { opacity: 0; transform: scale(0.98); }
-    to { opacity: 1; transform: scale(1); }
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   @keyframes mechanicalOut {
-    from { opacity: 1; transform: scale(1); }
-    to { opacity: 0; transform: scale(0.98); }
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(4px); }
   }
 }
 
@@ -144,21 +143,22 @@
 /* ── Scrollbar ── */
 .styled-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: oklch(from var(--border) l c h / 0.4) transparent;
+  scrollbar-color: oklch(from var(--muted-foreground) l c h / 0.15) transparent;
+  scroll-behavior: smooth;
 }
 .styled-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 .styled-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 .styled-scrollbar::-webkit-scrollbar-thumb {
-  background: oklch(from var(--border) l c h / 0.4);
+  background: oklch(from var(--muted-foreground) l c h / 0.15);
   border-radius: 3px;
 }
 .styled-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: oklch(from var(--border) l c h / 0.6);
+  background: oklch(from var(--muted-foreground) l c h / 0.3);
 }
 
 /* ── Animations ── */

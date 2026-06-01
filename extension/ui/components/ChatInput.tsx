@@ -22,9 +22,9 @@ export function ChatInput({ onSend, disabled, onStop, isStreaming, attachedTabs 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-center h-10 border-t border-primary/10 bg-background/50 backdrop-blur-sm px-4">
+    <form onSubmit={handleSubmit} className="flex items-center h-11 border-t border-border/40 px-4">
       {attachedTabs && attachedTabs.length > 0 && (
-        <div className="absolute bottom-12 left-4 flex items-center gap-1.5 text-[10px] text-muted-foreground font-mono bg-card/80 px-2 py-1 rounded">
+        <div className="absolute bottom-13 left-4 flex items-center gap-1.5 text-[10px] text-muted-foreground font-mono bg-card/90 backdrop-blur-sm px-2 py-1 border border-border/40">
           <GlobeIcon className="h-3 w-3" />
           <span className="truncate max-w-[260px]">
             {attachedTabs.length === 1
@@ -33,35 +33,31 @@ export function ChatInput({ onSend, disabled, onStop, isStreaming, attachedTabs 
           </span>
         </div>
       )}
-      <div
-        className={cn(
-          'flex items-center gap-2 w-full transition-colors duration-200',
-        )}
-      >
-        <span className="font-mono text-primary mr-2 animate-pulse select-none">▶</span>
+      <div className="flex items-center gap-2 w-full">
+        <span className="text-primary/50 select-none text-xs">▸</span>
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="COMMAND_INPUT"
+          placeholder="Ask anything..."
           disabled={disabled}
-          className="flex-1 bg-transparent text-sm font-mono text-foreground outline-none placeholder:text-muted-foreground/30"
+          className="flex-1 bg-transparent text-[13px] text-foreground outline-none placeholder:text-muted-foreground/40"
         />
         {isStreaming ? (
           <button
             type="button"
             onClick={onStop}
-            className="flex h-6 w-6 items-center justify-center rounded-sm text-destructive hover:bg-destructive/10 transition-colors duration-150"
+            className="flex h-6 w-6 items-center justify-center text-destructive/70 hover:text-destructive transition-colors duration-150"
           >
-            <SquareIcon className="h-2.5 w-2.5" fill="currentColor" />
+            <SquareIcon className="h-3 w-3" fill="currentColor" />
           </button>
         ) : (
           <button
             type="submit"
             disabled={disabled || !input.trim()}
-            className="flex h-6 w-6 items-center justify-center rounded-sm bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-30 transition-all duration-150"
+            className="flex h-6 w-6 items-center justify-center text-muted-foreground/40 hover:text-foreground disabled:opacity-20 transition-all duration-150"
           >
-            <ArrowUpIcon className="h-3 w-3" />
+            <ArrowUpIcon className="h-3.5 w-3.5" />
           </button>
         )}
       </div>
