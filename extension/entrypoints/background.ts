@@ -3,6 +3,7 @@ import { getConfig } from '../lib/storage'
 import type { ChatMessage, ExtensionMessage } from '../core/types'
 
 let agent: AgentLoop | null = null
+let activeConversationId: string | null = null
 
 async function getAgent(): Promise<AgentLoop> {
   if (!agent) {
@@ -20,6 +21,7 @@ function setupMessageListener() {
   chrome.runtime.onMessage.addListener(
     (message: ExtensionMessage, _sender, sendResponse) => {
       if (message.type === 'chat:send') {
+        activeConversationId = message.conversationId || null
         handleChatMessage(message.text, message.history || [])
         sendResponse({ ok: true })
       }

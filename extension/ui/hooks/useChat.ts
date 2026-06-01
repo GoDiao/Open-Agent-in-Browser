@@ -1,11 +1,13 @@
-import { useCallback, useRef, useState } from 'react'
-import type { ChatMessage, ToolResult } from '../../core/types'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import type { ChatMessage, Conversation, ToolResult } from '../../core/types'
+import { getConversations, saveConversation } from '../../lib/storage'
 
 export interface ChatState {
   messages: ChatMessage[]
   isStreaming: boolean
   currentToolCall: { name: string; args: string } | null
   error: string | null
+  conversationId: string | null
 }
 
 export function useChat() {
@@ -13,6 +15,34 @@ export function useChat() {
   const [isStreaming, setIsStreaming] = useState(false)
   const [currentToolCall, setCurrentToolCall] = useState<{ name: string; args: string } | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const conversationIdRef = useRef<string | null>(null)
+
+  // Generate conversation ID on first message
+  const ensureConversationId = useCallback(() => {
+    if (!conversationIdRef.current) {
+      conversationIdRef.current = crypto.randomUUID()
+    }
+    return conversationIdRef.current
+  }, [])
+
+  // Save current conversation to storage
+  const persistConversation = useCallback(async (msgs: ChatMessage[]) => {
+    const id = conversationIdRef.current
+    if (!id || msgs.length === 0) return
+
+    // Derive title from first user message
+    const firstUserMsg = msgs.find((m) => m.role === 'user')
+    const title = firstUserMsg?.content.slice(0, 50) || 'New Conversation'
+
+    const conversation: Conversation = {
+      id,
+      title,
+      messages: msgs,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    }
+    await saveConversation(conversation)
+  }, [])
 
   const sendMessage = useCallback(async (text: string) => {
     if (!text.trim() || isStreaming) return
@@ -21,21 +51,25 @@ export function useChat() {
     setError(null)
     setCurrentToolCall(null)
 
+    const conversationId = ensureConversationId()
+
     // Add user message immediately
     const userMsg: ChatMessage = { role: 'user', content: text }
-    setMessages((prev) => [...prev, userMsg])
+    const updatedMessages = [...messages, userMsg]
+    setMessages(updatedMessages)
 
     try {
       await chrome.runtime.sendMessage({
         type: 'chat:send',
         text,
         history: messages,
+        conversationId,
       })
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
       setIsStreaming(false)
     }
-  }, [messages, isStreaming])
+  }, [messages, isStreaming, ensureConversationId])
 
   const stop = useCallback(() => {
     setIsStreaming(false)
@@ -46,6 +80,18 @@ export function useChat() {
     setMessages([])
     setError(null)
     setCurrentToolCall(null)
+    conversationIdRef.current = null
+  }, [])
+
+  const loadConversation = useCallback(async (id: string) => {
+    const conversations = await getConversations()
+    const conversation = conversations.find((c) => c.id === id)
+    if (conversation) {
+      conversationIdRef.current = conversation.id
+      setMessages(conversation.messages)
+      setError(null)
+      setCurrentToolCall(null)
+    }
   }, [])
 
   const handleBackgroundMessage = useCallback((msg: { type: string; [key: string]: unknown }) => {
@@ -83,6 +129,11 @@ export function useChat() {
       case 'chat:done':
         setIsStreaming(false)
         setCurrentToolCall(null)
+        // Persist conversation after assistant response completes
+        setMessages((prev) => {
+          persistConversation(prev)
+          return prev
+        })
         break
       case 'chat:error':
         setError(msg.error as string)
@@ -90,16 +141,18 @@ export function useChat() {
         setCurrentToolCall(null)
         break
     }
-  }, [])
+  }, [persistConversation])
 
   return {
     messages,
     isStreaming,
     currentToolCall,
     error,
+    conversationId: conversationIdRef.current,
     sendMessage,
     stop,
     clear,
+    loadConversation,
     handleBackgroundMessage,
   }
 }
