@@ -1,4 +1,6 @@
+import { ArrowUpIcon, SquareIcon } from 'lucide-react'
 import { useState } from 'react'
+import { cn } from '../../lib/utils'
 
 interface Props {
   onSend: (text: string) => void
@@ -18,36 +20,36 @@ export function ChatInput({ onSend, disabled, onStop, isStreaming }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border-t border-[var(--border-light)] p-3">
-      <div className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 focus-within:border-[var(--accent)]/50 transition-colors duration-200">
+    <form onSubmit={handleSubmit} className="border-t border-border p-3">
+      <div
+        className={cn(
+          'flex items-center gap-2 rounded-xl border bg-card px-3 py-2.5 transition-colors duration-200',
+          'focus-within:border-ring',
+        )}
+      >
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask me to do anything..."
           disabled={disabled}
-          className="flex-1 bg-transparent text-[13px] text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]"
+          className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
         />
         {isStreaming ? (
           <button
             type="button"
             onClick={onStop}
-            className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--error-dim)] text-[var(--error)] hover:bg-[var(--error)]/20 transition-colors duration-150"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors duration-150"
           >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-              <rect x="2" y="2" width="8" height="8" rx="1.5" />
-            </svg>
+            <SquareIcon className="h-3.5 w-3.5" fill="currentColor" />
           </button>
         ) : (
           <button
             type="submit"
             disabled={disabled || !input.trim()}
-            className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--accent)] text-white hover:bg-[var(--accent-light)] disabled:opacity-30 disabled:hover:bg-[var(--accent)] transition-colors duration-150"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-30 transition-all duration-150"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 2L11 13" />
-              <path d="M22 2L15 22L11 13L2 9L22 2Z" />
-            </svg>
+            <ArrowUpIcon className="h-4 w-4" />
           </button>
         )}
       </div>

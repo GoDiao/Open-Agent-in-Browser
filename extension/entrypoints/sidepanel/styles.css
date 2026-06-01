@@ -1,59 +1,120 @@
 @import "tailwindcss";
 
+/* ── BrowserOS-aligned Design Tokens ── */
 :root {
-  --bg: #0a0a0f;
-  --bg-elevated: #12121a;
-  --bg-surface: #1a1a25;
-  --bg-hover: #22222f;
-  --text: #e8e8ed;
-  --text-secondary: #8888a0;
-  --text-muted: #55556a;
-  --border: #2a2a3a;
-  --border-light: #1e1e2e;
-  --accent: #6e56cf;
-  --accent-light: #9b8afb;
-  --accent-dim: rgba(110, 86, 207, 0.12);
-  --success: #3dd68c;
-  --error: #f5555d;
-  --error-dim: rgba(245, 85, 93, 0.1);
-  --radius: 10px;
+  --radius: 0.65rem;
+  --background: oklch(0.985 0.002 85);
+  --foreground: oklch(0.141 0.005 285.823);
+  --card: oklch(0.99 0.001 85);
+  --card-foreground: oklch(0.141 0.005 285.823);
+  --popover: oklch(0.99 0.001 85);
+  --popover-foreground: oklch(0.141 0.005 285.823);
+  --primary: oklch(0.646 0.222 41.116);
+  --primary-foreground: oklch(0.98 0.016 73.684);
+  --secondary: oklch(0.97 0.002 85);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --muted: oklch(0.97 0.002 85);
+  --muted-foreground: oklch(0.552 0.016 285.938);
+  --accent: oklch(0.97 0.002 85);
+  --accent-foreground: oklch(0.21 0.006 285.885);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.92 0.004 286.32);
+  --input: oklch(0.92 0.004 286.32);
+  --ring: oklch(0.75 0.183 55.934);
+  /* BrowserOS accent orange */
+  --accent-orange: oklch(0.6781 0.1663 43.21);
+  --accent-orange-bright: oklch(0.7531 0.1963 43.21);
+}
+
+.dark {
+  --background: oklch(0.25 0.01 265);
+  --foreground: oklch(0.92 0 0);
+  --card: oklch(0.28 0.01 265);
+  --card-foreground: oklch(0.92 0 0);
+  --popover: oklch(0.28 0.01 265);
+  --popover-foreground: oklch(0.92 0 0);
+  --primary: oklch(0.705 0.213 47.604);
+  --primary-foreground: oklch(0.98 0.016 73.684);
+  --secondary: oklch(0.32 0.01 265);
+  --secondary-foreground: oklch(0.92 0 0);
+  --muted: oklch(0.32 0.01 265);
+  --muted-foreground: oklch(0.65 0 0);
+  --accent: oklch(0.32 0.01 265);
+  --accent-foreground: oklch(0.92 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.92 0 0);
+  --border: oklch(0.38 0.01 265);
+  --input: oklch(0.38 0.01 265);
+  --ring: oklch(0.408 0.123 38.172);
+}
+
+@theme inline {
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --font-mono: "SF Mono", "Cascadia Code", "Fira Code", "JetBrains Mono", monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-accent-orange: var(--accent-orange);
+  --color-accent-orange-bright: var(--accent-orange-bright);
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
-body {
-  font-family: var(--font-sans);
-  background: var(--bg);
-  color: var(--text);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-size: 13px;
-  line-height: 1.5;
+/* ── Scrollbar ── */
+.styled-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(from var(--border) l c h / 0.4) transparent;
 }
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 5px;
+.styled-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
-::-webkit-scrollbar-track {
+.styled-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
-::-webkit-scrollbar-thumb {
-  background: var(--border);
+.styled-scrollbar::-webkit-scrollbar-thumb {
+  background: oklch(from var(--border) l c h / 0.4);
   border-radius: 3px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+.styled-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: oklch(from var(--border) l c h / 0.6);
 }
 
-/* Animations */
-@keyframes fadeInUp {
+/* ── Animations ── */
+@keyframes fade-in-up {
   from {
     opacity: 0;
     transform: translateY(8px);
@@ -64,15 +125,15 @@ body {
   }
 }
 
-@keyframes fadeIn {
+@keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-@keyframes slideUp {
+@keyframes slide-in-from-top-2 {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;
@@ -80,32 +141,44 @@ body {
   }
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 1; }
+@keyframes collapsible-down {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(--radix-collapsible-content-height);
+    opacity: 1;
+  }
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+@keyframes collapsible-up {
+  from {
+    height: var(--radix-collapsible-content-height);
+    opacity: 1;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+  }
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.3s ease-out forwards;
+  animation: fade-in-up 0.3s ease-out forwards;
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.2s ease-out forwards;
+  animation: fade-in 0.2s ease-out forwards;
 }
 
-.animate-slide-up {
-  animation: slideUp 0.35s ease-out forwards;
+.animate-slide-in-from-top-2 {
+  animation: slide-in-from-top-2 0.2s ease-out forwards;
 }
 
-.animate-pulse {
-  animation: pulse 1.5s ease-in-out infinite;
+.animate-collapsible-down {
+  animation: collapsible-down 0.2s ease-out;
 }
 
-.animate-spin {
-  animation: spin 0.8s linear infinite;
+.animate-collapsible-up {
+  animation: collapsible-up 0.2s ease-out;
 }

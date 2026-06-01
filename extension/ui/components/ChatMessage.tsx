@@ -1,4 +1,5 @@
 import type { ChatMessage as ChatMessageType } from '../../core/types'
+import { Message, MessageContent, MessageToolCall, MessageToolResult } from './ai-elements/message'
 
 interface Props {
   message: ChatMessageType
@@ -12,45 +13,37 @@ export function ChatMessage({ message, index }: Props) {
   if (isTool) {
     return (
       <div
-        className="animate-fade-in-up flex justify-start mb-3"
+        className="animate-fade-in-up"
         style={{ animationDelay: `${index * 30}ms` }}
       >
-        <div className="max-w-[85%] rounded-lg border border-[var(--border-light)] bg-[var(--bg-elevated)] px-3 py-2">
-          <div className="flex items-center gap-1.5 mb-1">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--success)]" />
-            <span className="text-[10px] font-medium uppercase tracking-wider text-[var(--text-muted)]">
-              Tool Result
-            </span>
-          </div>
-          <pre className="text-[11px] leading-relaxed text-[var(--text-secondary)] font-[var(--font-mono)] whitespace-pre-wrap break-words overflow-hidden max-h-[120px]">
-            {message.content.length > 400
-              ? message.content.slice(0, 400) + '...'
-              : message.content}
-          </pre>
-        </div>
+        <Message from="tool">
+          <MessageContent>
+            <MessageToolResult>
+              {message.content.length > 400
+                ? message.content.slice(0, 400) + '...'
+                : message.content}
+            </MessageToolResult>
+          </MessageContent>
+        </Message>
       </div>
     )
   }
 
   return (
     <div
-      className={`animate-fade-in-up flex ${isUser ? 'justify-end' : 'justify-start'} mb-3`}
+      className="animate-fade-in-up"
       style={{ animationDelay: `${index * 30}ms` }}
     >
-      <div
-        className={`max-w-[85%] rounded-xl px-3.5 py-2.5 text-[13px] leading-relaxed ${
-          isUser
-            ? 'bg-[var(--accent)] text-white rounded-br-md'
-            : 'bg-[var(--bg-surface)] text-[var(--text)] rounded-bl-md border border-[var(--border-light)]'
-        }`}
-      >
-        {message.content || (
-          <span className="inline-flex items-center gap-1.5 text-[var(--text-muted)]">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--accent-light)] animate-pulse" />
-            thinking...
-          </span>
-        )}
-      </div>
+      <Message from={isUser ? 'user' : 'assistant'}>
+        <MessageContent>
+          {message.content || (
+            <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent-orange animate-pulse" />
+              thinking...
+            </span>
+          )}
+        </MessageContent>
+      </Message>
     </div>
   )
 }
