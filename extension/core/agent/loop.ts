@@ -2,6 +2,7 @@ import { createCDPClient } from '../cdp/client'
 import { createRegistry } from '../tools/registry'
 import type { ChatMessage, CDPClient, LLMConfig, ToolCall, ToolDefinition, ToolResult } from '../types'
 import { ToolResponse } from '../types'
+import { needsCompaction, compactMessages } from './compaction'
 import { buildSystemPrompt } from './prompt'
 import { createProvider } from './provider'
 
@@ -32,10 +33,12 @@ export class AgentLoop {
   private cdp: CDPClient
   private registry = createRegistry()
   private provider
+  private config: LLMConfig
 
   constructor(config: LLMConfig) {
     this.cdp = createCDPClient()
     this.provider = createProvider(config)
+    this.config = config
     this.registerTools()
   }
 
@@ -86,10 +89,20 @@ export class AgentLoop {
       // Ignore errors fetching tab context
     }
 
+    // Compact history if it exceeds the threshold
+    let compactedHistory = history
+    if (needsCompaction(history)) {
+      try {
+        compactedHistory = await compactMessages(history, this.config)
+      } catch {
+        // If compaction fails, use original history
+      }
+    }
+
     const systemPrompt = buildSystemPrompt(this.registry.getEnabled(), pageContext)
     const messages: ChatMessage[] = [
       { role: 'system', content: systemPrompt },
-      ...history,
+      ...compactedHistory,
       { role: 'user', content: userMessage },
     ]
 
