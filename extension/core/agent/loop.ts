@@ -9,6 +9,14 @@ import { createProvider } from './provider'
 import { close_page, go_back, go_forward, list_pages, navigate, new_page, reload } from '../tools/navigation'
 import { evaluate_script, get_page_content, take_screenshot, take_snapshot } from '../tools/snapshot'
 import { click, fill, hover, scroll } from '../tools/input'
+import { create_bookmark, search_bookmarks, get_bookmarks, update_bookmark, remove_bookmark, move_bookmark } from '../tools/bookmarks'
+import { search_history, get_recent_history, delete_history_url, delete_history_range } from '../tools/history'
+import { list_windows, create_window, close_window, focus_window } from '../tools/windows'
+import { create_tab_group, list_tab_groups, close_tab_group } from '../tools/tab-groups'
+import { download_file, save_pdf, save_screenshot } from '../tools/downloads'
+import { get_console_logs } from '../tools/console'
+import { get_network_requests } from '../tools/network'
+import { get_dom, search_dom } from '../tools/dom'
 import { toolToJsonSchema } from '../tools/framework'
 
 export interface AgentCallbacks {
@@ -32,9 +40,28 @@ export class AgentLoop {
 
   private registerTools(): void {
     const tools = [
+      // Navigation (7)
       navigate, list_pages, new_page, close_page, go_back, go_forward, reload,
+      // Snapshot (4)
       take_screenshot, take_snapshot, get_page_content, evaluate_script,
+      // Input (4)
       click, fill, hover, scroll,
+      // Bookmarks (6)
+      create_bookmark, search_bookmarks, get_bookmarks, update_bookmark, remove_bookmark, move_bookmark,
+      // History (4)
+      search_history, get_recent_history, delete_history_url, delete_history_range,
+      // Windows (4)
+      list_windows, create_window, close_window, focus_window,
+      // Tab Groups (3)
+      create_tab_group, list_tab_groups, close_tab_group,
+      // Downloads (3)
+      download_file, save_pdf, save_screenshot,
+      // Console (1)
+      get_console_logs,
+      // Network (1)
+      get_network_requests,
+      // DOM (2)
+      get_dom, search_dom,
     ]
     for (const tool of tools) {
       this.registry.register(tool)
