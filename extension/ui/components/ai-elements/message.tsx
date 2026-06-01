@@ -33,7 +33,7 @@ export const MessageContent = ({
   <div
     className={cn(
       'flex w-fit flex-col gap-2 overflow-hidden text-sm',
-      'group-[.is-user]:ml-auto group-[.is-user]:rounded-2xl group-[.is-user]:rounded-br-md group-[.is-user]:bg-primary group-[.is-user]:px-4 group-[.is-user]:py-2.5 group-[.is-user]:text-primary-foreground',
+      'group-[.is-user]:ml-auto group-[.is-user]:rounded-md group-[.is-user]:rounded-tr-sm group-[.is-user]:bg-primary group-[.is-user]:px-4 group-[.is-user]:py-2 group-[.is-user]:text-primary-foreground',
       'group-[.is-assistant]:text-foreground',
       className,
     )}
@@ -82,16 +82,16 @@ export const MessageToolCall = ({
 }: MessageToolCallProps) => (
   <div
     className={cn(
-      'flex items-center gap-2 rounded-lg border px-3 py-2 text-xs',
-      state === 'running' && 'border-accent-orange/30 bg-accent-orange/5 text-accent-orange',
-      state === 'completed' && 'border-green-500/30 bg-green-500/5 text-green-600 dark:text-green-400',
-      state === 'error' && 'border-destructive/30 bg-destructive/5 text-destructive',
+      'flex items-center gap-2 rounded-md border px-3 py-2 text-xs',
+      state === 'running' && 'border-primary/20 bg-primary/5 text-primary',
+      state === 'completed' && 'border-green-500/20 bg-green-500/5 text-green-600 dark:text-green-400',
+      state === 'error' && 'border-destructive/20 bg-destructive/5 text-destructive',
       className,
     )}
     {...props}
   >
     {state === 'running' && (
-      <div className="h-3 w-3 animate-spin rounded-full border-2 border-accent-orange/30 border-t-accent-orange" />
+      <div className="h-3 w-3 animate-spin rounded-full border-2 border-primary/20 border-t-primary" />
     )}
     {state === 'completed' && (
       <CheckCircleIcon className="h-3.5 w-3.5" />
@@ -133,7 +133,7 @@ export const MessageToolResult = ({
         )}
         <span className={cn(
           'inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider',
-          state === 'running' && 'bg-accent-orange/10 text-accent-orange',
+          state === 'running' && 'bg-primary/10 text-primary',
           state === 'completed' && 'bg-green-500/10 text-green-600 dark:text-green-400',
           state === 'error' && 'bg-destructive/10 text-destructive',
         )}>

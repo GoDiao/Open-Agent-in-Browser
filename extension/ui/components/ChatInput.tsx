@@ -35,23 +35,23 @@ export function ChatInput({ onSend, disabled, onStop, isStreaming, attachedTabs 
       )}
       <div
         className={cn(
-          'flex items-center gap-2 rounded-xl border bg-card px-3 py-2.5 transition-colors duration-200',
-          'focus-within:border-ring',
+          'flex items-center gap-2 rounded-lg border border-border bg-card/50 px-3 py-2 transition-colors duration-200',
+          'focus-within:border-ring focus-within:bg-card',
         )}
       >
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask me to do anything..."
+          placeholder="Ask Iris..."
           disabled={disabled}
-          className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+          className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/60"
         />
         {isStreaming ? (
           <button
             type="button"
             onClick={onStop}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors duration-150"
+            className="flex h-8 w-8 items-center justify-center rounded-md bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors duration-150"
           >
             <SquareIcon className="h-3.5 w-3.5" fill="currentColor" />
           </button>
@@ -59,7 +59,7 @@ export function ChatInput({ onSend, disabled, onStop, isStreaming, attachedTabs 
           <button
             type="submit"
             disabled={disabled || !input.trim()}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-30 transition-all duration-150"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm hover:opacity-90 disabled:opacity-30 transition-all duration-150"
           >
             <ArrowUpIcon className="h-4 w-4" />
           </button>
