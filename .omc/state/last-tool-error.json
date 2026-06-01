@@ -1,0 +1,7 @@
+{
+  "tool_name": "Read",
+  "tool_input_preview": "{\"file_path\":\"E:\\\\AProject\\\\TianX\\\\Personal\\\\Open-Agent-in-Browser\\\\extension\\\\ui\\\\components\\\\ChatMessage.tsx\"}",
+  "error": "File does not exist. Note: your current working directory is E:\\AProject\\TianX\\Personal\\Open-Agent-in-Browser.",
+  "timestamp": "2026-05-31T18:08:18.657Z",
+  "retry_count": 6
+}
