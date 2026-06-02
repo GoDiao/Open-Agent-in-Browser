@@ -25,6 +25,8 @@ export function App() {
     handleBackgroundMessage,
   } = useChat()
 
+  const [pendingMessage, setPendingMessage] = useState<string | null>(null)
+
   // Apply theme on mount, load memory, check onboarding, and handle pending actions
   useEffect(() => {
     getTheme().then(applyTheme)
@@ -41,19 +43,33 @@ export function App() {
       if (action && action.timestamp && Date.now() - action.timestamp < 5000) {
         if (action.conversationId) {
           loadConversation(action.conversationId)
+        } else if (action.message) {
+          setPendingMessage(action.message)
         }
         chrome.storage.session.remove('pendingSidepanelAction')
       }
     })
   }, [])
 
+  // Send pending message once sendMessage is ready
+  useEffect(() => {
+    if (pendingMessage && !isStreaming) {
+      sendMessage(pendingMessage)
+      setPendingMessage(null)
+    }
+  }, [pendingMessage, isStreaming, sendMessage])
+
   useEffect(() => {
     const listener = (msg: { type: string; [key: string]: unknown }) => {
       handleBackgroundMessage(msg)
+      // Handle incoming messages from new tab / popup while sidepanel is open
+      if (msg.type === 'sidepanel:send' && typeof msg.message === 'string') {
+        sendMessage(msg.message)
+      }
     }
     chrome.runtime.onMessage.addListener(listener)
     return () => chrome.runtime.onMessage.removeListener(listener)
-  }, [handleBackgroundMessage])
+  }, [handleBackgroundMessage, sendMessage])
 
   if (view === 'onboarding') {
     return <Onboarding onComplete={() => setView('chat')} />

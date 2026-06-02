@@ -51,7 +51,7 @@ function setupMessageListener() {
         sendResponse({ tabId })
       } else if (message.type === 'open-sidepanel') {
         const msg = message as { type: 'open-sidepanel'; message?: string; conversationId?: string }
-        // Store pending action for sidepanel to pick up
+        // Store pending action for sidepanel to pick up (if it's not open yet)
         if (msg.conversationId || msg.message) {
           chrome.storage.session.set({
             pendingSidepanelAction: {
@@ -60,6 +60,10 @@ function setupMessageListener() {
               timestamp: Date.now(),
             },
           })
+          // Also send directly in case sidepanel is already open
+          if (msg.message) {
+            sendToUI({ type: 'sidepanel:send', message: msg.message })
+          }
         }
         // Open the sidepanel on the active tab
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
