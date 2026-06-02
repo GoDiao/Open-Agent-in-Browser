@@ -71,7 +71,11 @@ function startGlow() {
   stopBtn.addEventListener('mouseleave', () => { stopBtn!.style.opacity = '1' })
   stopBtn.addEventListener('click', () => {
     if (activeConversationId) {
-      chrome.runtime.sendMessage({ type: 'stop-agent', conversationId: activeConversationId })
+      try {
+        chrome.runtime.sendMessage({ type: 'stop-agent', conversationId: activeConversationId })
+      } catch {
+        // Extension context invalidated
+      }
     }
     stopGlow()
   })
@@ -89,16 +93,20 @@ function stopGlow() {
 export default defineContentScript({
   matches: ['*://*/*'],
   main() {
-    chrome.runtime.onMessage.addListener((message: { conversationId?: string; isActive?: boolean; showConfetti?: boolean }) => {
-      if (message.conversationId && typeof message.isActive === 'boolean') {
-        if (message.isActive) {
-          activeConversationId = message.conversationId
-          startGlow()
-        } else if (message.conversationId === activeConversationId) {
-          stopGlow()
+    try {
+      chrome.runtime.onMessage.addListener((message: { conversationId?: string; isActive?: boolean; showConfetti?: boolean }) => {
+        if (message.conversationId && typeof message.isActive === 'boolean') {
+          if (message.isActive) {
+            activeConversationId = message.conversationId
+            startGlow()
+          } else if (message.conversationId === activeConversationId) {
+            stopGlow()
+          }
         }
-      }
-    })
+      })
+    } catch {
+      // Extension context invalidated
+    }
 
     window.addEventListener('beforeunload', stopGlow)
     document.addEventListener('visibilitychange', () => {
