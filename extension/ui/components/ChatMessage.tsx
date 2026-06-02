@@ -68,7 +68,9 @@ export function ChatMessage({ message, index }: Props) {
             {/* 文本内容 */}
             {message.content ? (
               <Shimmer active={message.isStreaming}>
-                <MessageResponse>{message.content}</MessageResponse>
+                <div className={message.isStreaming ? 'animate-text-reveal' : undefined}>
+                  <MessageResponse>{message.content}</MessageResponse>
+                </div>
               </Shimmer>
             ) : hasToolCalls ? (
               <span className="inline-flex items-center gap-1.5 text-muted-foreground/60 text-xs">

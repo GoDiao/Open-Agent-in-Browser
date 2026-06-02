@@ -285,6 +285,10 @@
     animation: none;
     opacity: 1;
   }
+  [data-theme="industrial-bauhaus"] .animate-text-reveal {
+    animation: none;
+    opacity: 1;
+  }
 
   /* Analog Laboratory: Blur fade-in (mercury condensation) */
   [data-theme="analog-laboratory"] .animate-mechanical-in {
@@ -318,6 +322,10 @@
     opacity: 1;
   }
   [data-theme="monochrome-plex"] .animate-slide-in-from-top-2 {
+    animation: none;
+    opacity: 1;
+  }
+  [data-theme="monochrome-plex"] .animate-text-reveal {
     animation: none;
     opacity: 1;
   }
@@ -452,4 +460,42 @@
 }
 .animate-shimmer-sweep {
   animation: shimmer-sweep 1.8s ease-in-out infinite;
+}
+
+/* ── Text Reveal (streaming fade-in) ── */
+@keyframes text-reveal {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-text-reveal {
+  animation: text-reveal 150ms ease-out forwards;
+}
+
+/* ── Input Border Breathe (outset shadow, avoids overflow clip) ── */
+@keyframes border-breathe {
+  0%, 100% { box-shadow: 0 0 0 1px var(--primary); }
+  50% { box-shadow: 0 0 8px 0 var(--primary), 0 0 0 1px var(--primary); }
+}
+.chat-input-wrapper {
+  position: relative;
+}
+.chat-input-wrapper:focus-within {
+  animation: border-breathe 3s ease-in-out infinite;
+}
+
+/* Bauhaus: static focus, no breathe */
+[data-theme="industrial-bauhaus"] .chat-input-wrapper:focus-within {
+  animation: none;
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+/* Analog: slower breathe */
+[data-theme="analog-laboratory"] .chat-input-wrapper:focus-within {
+  animation-duration: 4s;
+}
+
+/* Monochrome Plex: static focus */
+[data-theme="monochrome-plex"] .chat-input-wrapper:focus-within {
+  animation: none;
+  box-shadow: 0 0 0 1px var(--primary);
 }
