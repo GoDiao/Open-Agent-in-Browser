@@ -163,8 +163,8 @@ export async function loadMemory(): Promise<void> {
  * Get the frozen snapshot for system prompt injection.
  * Returns the state captured at loadMemory() time, NOT the live state.
  */
-export function getMemorySnapshot(): Record<MemoryTarget, string> {
-  return { ..._frozenSnapshot }
+export function getMemorySnapshot(): Record<MemoryTarget, string> & { userFields: UserFields } {
+  return { ..._frozenSnapshot, userFields: { ..._userFields } }
 }
 
 /**
