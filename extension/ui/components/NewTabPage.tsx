@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { GlobeIcon, CameraIcon, FileTextIcon, MessageSquareIcon, TrashIcon, PlusIcon, LinkIcon, ClockIcon, ArrowUpIcon } from 'lucide-react'
+import { GlobeIcon, CameraIcon, FileTextIcon, MessageSquareIcon, TrashIcon, PlusIcon, LinkIcon, ClockIcon, ArrowUpIcon, SearchIcon, SparklesIcon } from 'lucide-react'
 import type { Conversation } from '../../core/types'
 import type { ScheduledTask } from '../../lib/scheduler'
 import { getConversations, deleteConversation } from '../../lib/storage'
@@ -67,6 +67,7 @@ export function NewTabPage() {
   const [userName, setUserName] = useState('')
   const [tasks, setTasks] = useState<ScheduledTask[]>([])
   const [quickInput, setQuickInput] = useState('')
+  const [inputMode, setInputMode] = useState<'search' | 'agent'>('search')
 
   useEffect(() => {
     getConversations().then((convs) => setConversations(convs.slice(0, 5)))
@@ -97,10 +98,14 @@ export function NewTabPage() {
   const handleQuickSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!quickInput.trim()) return
-    chrome.runtime.sendMessage({
-      type: 'open-sidepanel',
-      message: quickInput.trim(),
-    })
+    if (inputMode === 'search') {
+      window.location.href = `https://www.google.com/search?q=${encodeURIComponent(quickInput.trim())}`
+    } else {
+      chrome.runtime.sendMessage({
+        type: 'open-sidepanel',
+        message: quickInput.trim(),
+      })
+    }
     setQuickInput('')
   }
 
@@ -166,14 +171,46 @@ export function NewTabPage() {
 
       {/* Quick Input */}
       <div className="mt-6 w-full max-w-lg px-8 animate-fade-in-up" style={{ animationDelay: '50ms' }}>
+        {/* Mode toggle */}
+        <div className="flex items-center justify-center gap-1 mb-2">
+          <button
+            onClick={() => setInputMode('search')}
+            className={cn(
+              'flex items-center gap-1 px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider transition-all duration-150 border',
+              inputMode === 'search'
+                ? 'border-primary/40 bg-primary/[0.06] text-foreground'
+                : 'border-transparent text-muted-foreground/40 hover:text-muted-foreground/70',
+            )}
+          >
+            <SearchIcon className="h-3 w-3" />
+            Search
+          </button>
+          <button
+            onClick={() => setInputMode('agent')}
+            className={cn(
+              'flex items-center gap-1 px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider transition-all duration-150 border',
+              inputMode === 'agent'
+                ? 'border-primary/40 bg-primary/[0.06] text-foreground'
+                : 'border-transparent text-muted-foreground/40 hover:text-muted-foreground/70',
+            )}
+          >
+            <SparklesIcon className="h-3 w-3" />
+            Agent
+          </button>
+        </div>
+
         <form onSubmit={handleQuickSubmit} className="chat-input-wrapper border border-border/40">
           <div className="flex items-center h-10 px-4">
-            <span className="text-primary/50 select-none text-xs mr-2">▸</span>
+            {inputMode === 'search' ? (
+              <SearchIcon className="h-3.5 w-3.5 text-muted-foreground/40 mr-2 shrink-0" />
+            ) : (
+              <SparklesIcon className="h-3.5 w-3.5 text-primary/50 mr-2 shrink-0" />
+            )}
             <input
               type="text"
               value={quickInput}
               onChange={(e) => setQuickInput(e.target.value)}
-              placeholder="Ask Iris anything..."
+              placeholder={inputMode === 'search' ? 'Search Google...' : 'Ask Iris anything...'}
               className="flex-1 bg-transparent text-[13px] text-foreground outline-none placeholder:text-muted-foreground/40"
             />
             <button
