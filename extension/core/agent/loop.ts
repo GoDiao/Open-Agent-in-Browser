@@ -5,6 +5,7 @@ import { ToolResponse } from '../types'
 import { needsCompaction, compactMessages } from './compaction'
 import { buildSystemPrompt } from './prompt'
 import { createProvider } from './provider'
+import { addExecutionRecord } from '../../lib/history'
 
 // Import all tools
 import { close_page, go_back, go_forward, list_pages, navigate, new_page, reload } from '../tools/navigation'
@@ -16,8 +17,11 @@ import { list_windows, create_window, close_window, focus_window } from '../tool
 import { create_tab_group, list_tab_groups, close_tab_group } from '../tools/tab-groups'
 import { download_file, save_pdf, save_screenshot } from '../tools/downloads'
 import { get_console_logs } from '../tools/console'
-import { get_network_requests } from '../tools/network'
+import { get_network_requests, block_requests, mock_response, set_network_conditions, set_extra_headers, disable_cache } from '../tools/network'
 import { get_dom, search_dom } from '../tools/dom'
+import { read_file_from_page, get_page_links, get_page_images, extract_structured_data, download_text } from '../tools/file'
+import { get_cookies, set_cookie, delete_cookies, clear_cookies, get_local_storage, set_local_storage, remove_local_storage, get_session_storage } from '../tools/storage'
+import { emulate_device, list_devices, set_viewport, set_geolocation, set_timezone, emulate_media, set_user_agent, throttle_cpu } from '../tools/emulation'
 import { toolToJsonSchema } from '../tools/framework'
 
 export interface AgentCallbacks {
@@ -62,10 +66,16 @@ export class AgentLoop {
       download_file, save_pdf, save_screenshot,
       // Console (1)
       get_console_logs,
-      // Network (1)
-      get_network_requests,
+      // Network (6)
+      get_network_requests, block_requests, mock_response, set_network_conditions, set_extra_headers, disable_cache,
       // DOM (2)
       get_dom, search_dom,
+      // File (5)
+      read_file_from_page, get_page_links, get_page_images, extract_structured_data, download_text,
+      // Storage (8)
+      get_cookies, set_cookie, delete_cookies, clear_cookies, get_local_storage, set_local_storage, remove_local_storage, get_session_storage,
+      // Emulation (8)
+      emulate_device, list_devices, set_viewport, set_geolocation, set_timezone, emulate_media, set_user_agent, throttle_cpu,
     ]
     for (const tool of tools) {
       this.registry.register(tool)
@@ -203,6 +213,7 @@ export class AgentLoop {
 
     const ctx = { cdp: this.cdp, tabId }
     const response = new ToolResponse()
+    const startTime = Date.now()
 
     try {
       const args = JSON.parse(toolCall.function.arguments)
@@ -212,6 +223,27 @@ export class AgentLoop {
       response.error(`Tool error: ${msg}`)
     }
 
-    return response.toResult()
+    const result = response.toResult()
+    const duration = Date.now() - startTime
+
+    // Record execution history (fire-and-forget)
+    try {
+      let pageUrl: string | undefined
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+        pageUrl = tab?.url
+      } catch {}
+
+      addExecutionRecord({
+        toolName: toolCall.function.name,
+        args: toolCall.function.arguments,
+        result,
+        duration,
+        tabId,
+        pageUrl,
+      }).catch(() => {})
+    } catch {}
+
+    return result
   }
 }

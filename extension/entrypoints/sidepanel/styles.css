@@ -158,9 +158,58 @@
   --glow-color: oklch(0.72 0.08 140 / 0.2);
 }
 
-/* ══════════════════════════════════════════════════════════════
-   Tailwind Color Mapping
-   ══════════════════════════════════════════════════════════════ */
+/* ── Theme 4: Monochrome Plex ── */
+/* 意象：IBM Plex Mono 极简文档站，纯黑白灰，monospace 全覆盖 */
+[data-theme="monochrome-plex"] {
+  --radius: 0px;
+  --background: rgb(253, 252, 252);
+  --foreground: rgb(32, 29, 29);
+  --card: rgb(248, 247, 247);
+  --card-foreground: rgb(32, 29, 29);
+  --popover: rgb(248, 247, 247);
+  --popover-foreground: rgb(32, 29, 29);
+  --primary: rgb(32, 29, 29);
+  --primary-foreground: rgb(253, 252, 252);
+  --secondary: rgb(248, 247, 247);
+  --secondary-foreground: rgb(100, 98, 98);
+  --muted: rgb(248, 247, 247);
+  --muted-foreground: rgb(100, 98, 98);
+  --accent: rgb(248, 247, 247);
+  --accent-foreground: rgb(32, 29, 29);
+  --destructive: rgb(180, 40, 40);
+  --destructive-foreground: rgb(253, 252, 252);
+  --border: rgb(230, 228, 228);
+  --input: rgb(230, 228, 228);
+  --ring: rgb(32, 29, 29);
+  --accent-orange: rgb(32, 29, 29);
+  --accent-orange-bright: rgb(60, 56, 56);
+  --glow-color: rgba(32, 29, 29, 0.06);
+}
+
+[data-theme="monochrome-plex"].dark {
+  --background: rgb(20, 19, 19);
+  --foreground: rgb(200, 198, 198);
+  --card: rgb(28, 27, 27);
+  --card-foreground: rgb(200, 198, 198);
+  --popover: rgb(28, 27, 27);
+  --popover-foreground: rgb(200, 198, 198);
+  --primary: rgb(200, 198, 198);
+  --primary-foreground: rgb(20, 19, 19);
+  --secondary: rgb(28, 27, 27);
+  --secondary-foreground: rgb(140, 138, 138);
+  --muted: rgb(28, 27, 27);
+  --muted-foreground: rgb(120, 118, 118);
+  --accent: rgb(28, 27, 27);
+  --accent-foreground: rgb(200, 198, 198);
+  --destructive: rgb(200, 60, 60);
+  --destructive-foreground: rgb(253, 252, 252);
+  --border: rgb(45, 43, 43);
+  --input: rgb(45, 43, 43);
+  --ring: rgb(200, 198, 198);
+  --accent-orange: rgb(200, 198, 198);
+  --accent-orange-bright: rgb(220, 218, 218);
+  --glow-color: rgba(200, 198, 198, 0.06);
+}
 
 @theme inline {
   --font-sans: "Inter Tight", "-apple-system", "BlinkMacSystemFont", "Segoe UI", system-ui, sans-serif;
@@ -254,6 +303,24 @@
   .animate-pulse-wave {
     animation: pulse-wave 0.6s ease-in-out infinite;
   }
+
+  /* Monochrome Plex: no animations, instant snap */
+  [data-theme="monochrome-plex"] .animate-mechanical-in {
+    animation: none;
+    opacity: 1;
+  }
+  [data-theme="monochrome-plex"] .animate-fade-in-up {
+    animation: none;
+    opacity: 1;
+  }
+  [data-theme="monochrome-plex"] .animate-fade-in {
+    animation: none;
+    opacity: 1;
+  }
+  [data-theme="monochrome-plex"] .animate-slide-in-from-top-2 {
+    animation: none;
+    opacity: 1;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -297,6 +364,19 @@
   /* Analog: no grain (fluid glass feel) */
   [data-theme="analog-laboratory"] body::before {
     display: none;
+  }
+
+  /* Monochrome Plex: no grain, monospace everywhere */
+  [data-theme="monochrome-plex"] body::before {
+    display: none;
+  }
+  [data-theme="monochrome-plex"] body {
+    font-family: "IBM Plex Mono", "SF Mono", "Cascadia Code", "Fira Code", monospace;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  [data-theme="monochrome-plex"] * {
+    font-family: "IBM Plex Mono", "SF Mono", "Cascadia Code", "Fira Code", monospace;
   }
 }
 
@@ -363,4 +443,13 @@
 }
 .animate-collapsible-up {
   animation: collapsible-up 0.2s ease-out;
+}
+
+/* ── Shimmer Sweep ── */
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.animate-shimmer-sweep {
+  animation: shimmer-sweep 1.8s ease-in-out infinite;
 }

@@ -1,6 +1,7 @@
 import { AgentLoop } from '../core/agent/loop'
 import { getConfig } from '../lib/storage'
 import type { ChatMessage, ExtensionMessage } from '../core/types'
+import { getScheduledTasks, updateScheduledTask, syncAlarms } from '../lib/scheduler'
 
 let agent: AgentLoop | null = null
 let activeConversationId: string | null = null
@@ -8,6 +9,18 @@ let activeConversationId: string | null = null
 function sendToUI(message: Record<string, unknown>) {
   chrome.runtime.sendMessage(message).catch(() => {
     // Sidepanel not open — ignore
+  })
+}
+
+function broadcastToContentScripts(message: Record<string, unknown>) {
+  chrome.tabs.query({}, (tabs) => {
+    for (const tab of tabs) {
+      if (tab.id) {
+        chrome.tabs.sendMessage(tab.id, message).catch(() => {
+          // Tab may not have content script — ignore
+        })
+      }
+    }
   })
 }
 
@@ -31,24 +44,26 @@ function setupMessageListener() {
         activeConversationId = chatMsg.conversationId || null
         handleChatMessage(chatMsg.text, chatMsg.history || [])
         sendResponse({ ok: true })
+      } else if (message.type === 'get-tab-id') {
+        const tabId = _sender.tab?.id || null
+        sendResponse({ tabId })
       } else if (message.type === 'open-sidepanel') {
         const msg = message as { type: 'open-sidepanel'; message?: string; conversationId?: string }
-        // Open the sidepanel on the active tab, then optionally send a message
+        // Store pending action for sidepanel to pick up
+        if (msg.conversationId || msg.message) {
+          chrome.storage.session.set({
+            pendingSidepanelAction: {
+              message: msg.message,
+              conversationId: msg.conversationId,
+              timestamp: Date.now(),
+            },
+          })
+        }
+        // Open the sidepanel on the active tab
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
           const tab = tabs[0]
           if (tab?.id) {
-            chrome.sidePanel.open({ tabId: tab.id }).then(() => {
-              if (msg.message) {
-                // Delay slightly to let sidepanel initialize
-                setTimeout(() => {
-                  sendToUI({
-                    type: 'sidepanel:action',
-                    message: msg.message,
-                    conversationId: msg.conversationId,
-                  })
-                }, 300)
-              }
-            })
+            chrome.sidePanel.open({ tabId: tab.id })
           }
         })
         sendResponse({ ok: true })
@@ -62,6 +77,14 @@ async function handleChatMessage(text: string, history: ChatMessage[]) {
   try {
     const agentLoop = await getAgent()
 
+    // Start glow overlay on all tabs
+    if (activeConversationId) {
+      broadcastToContentScripts({
+        conversationId: activeConversationId,
+        isActive: true,
+      })
+    }
+
     await agentLoop.run(text, history, {
       onStream: (chunk) => {
         sendToUI({ type: 'chat:stream', chunk })
@@ -74,14 +97,35 @@ async function handleChatMessage(text: string, history: ChatMessage[]) {
       },
       onDone: () => {
         sendToUI({ type: 'chat:done' })
+        // Stop glow overlay
+        if (activeConversationId) {
+          broadcastToContentScripts({
+            conversationId: activeConversationId,
+            isActive: false,
+          })
+        }
       },
       onError: (error) => {
         sendToUI({ type: 'chat:error', error })
+        // Stop glow overlay
+        if (activeConversationId) {
+          broadcastToContentScripts({
+            conversationId: activeConversationId,
+            isActive: false,
+          })
+        }
       },
     })
   } catch (err) {
     const error = err instanceof Error ? err.message : String(err)
     sendToUI({ type: 'chat:error', error })
+    // Stop glow overlay
+    if (activeConversationId) {
+      broadcastToContentScripts({
+        conversationId: activeConversationId,
+        isActive: false,
+      })
+    }
   }
 }
 
@@ -101,4 +145,38 @@ export default defineBackground(() => {
       agent = null
     }
   })
+
+  // Handle scheduled tasks
+  chrome.alarms.onAlarm.addListener(async (alarm) => {
+    const tasks = await getScheduledTasks()
+    const task = tasks.find(t => t.id === alarm.name && t.enabled)
+    if (!task) return
+
+    // Update last run time
+    await updateScheduledTask(task.id, { lastRun: Date.now() })
+
+    // Execute the task prompt
+    try {
+      const agentLoop = await getAgent()
+      const history: ChatMessage[] = []
+
+      await agentLoop.run(task.prompt, history, {
+        onStream: () => {},
+        onToolCall: () => {},
+        onToolResult: () => {},
+        onDone: () => {},
+        onError: () => {},
+      })
+
+      // If one-time task, disable after execution
+      if (task.schedule.type === 'once') {
+        await updateScheduledTask(task.id, { enabled: false })
+      }
+    } catch (err) {
+      console.error(`Scheduled task "${task.name}" failed:`, err)
+    }
+  })
+
+  // Sync alarms on startup
+  syncAlarms()
 })

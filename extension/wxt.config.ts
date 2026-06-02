@@ -4,8 +4,8 @@ import { defineConfig } from 'wxt'
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
   manifest: {
-    name: 'Open Agent',
-    description: 'AI Agent for your browser',
+    name: 'Iris',
+    description: 'Precision viewport control for the active DOM',
     permissions: [
       'activeTab',
       'debugger',
@@ -17,10 +17,11 @@ export default defineConfig({
       'tabGroups',
       'downloads',
       'scripting',
+      'alarms',
     ],
     host_permissions: ['<all_urls>'],
     action: {
-      default_title: 'Open Agent',
+      default_title: 'Iris',
     },
     side_panel: {
       default_path: 'sidepanel.html',

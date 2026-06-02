@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react'
-import { GlobeIcon, CameraIcon, FileTextIcon, MessageSquareIcon } from 'lucide-react'
+import { GlobeIcon, CameraIcon, FileTextIcon, MessageSquareIcon, TrashIcon, PlusIcon, LinkIcon } from 'lucide-react'
 import type { Conversation } from '../../core/types'
-import { getConversations } from '../../lib/storage'
+import { getConversations, deleteConversation } from '../../lib/storage'
+import { cn } from '../../lib/utils'
+
+interface QuickLink {
+  id: string
+  title: string
+  url: string
+  favicon?: string
+}
 
 const QUICK_ACTIONS = [
   {
@@ -24,15 +32,37 @@ const QUICK_ACTIONS = [
   },
 ]
 
+const DEFAULT_LINKS: QuickLink[] = [
+  { id: 'gmail', title: 'Gmail', url: 'https://mail.google.com' },
+  { id: 'github', title: 'GitHub', url: 'https://github.com' },
+  { id: 'youtube', title: 'YouTube', url: 'https://youtube.com' },
+  { id: 'twitter', title: 'X', url: 'https://x.com' },
+]
+
+function getFaviconUrl(url: string): string {
+  try {
+    const domain = new URL(url).hostname
+    return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`
+  } catch {
+    return ''
+  }
+}
+
 export function NewTabPage() {
   const [conversations, setConversations] = useState<Conversation[]>([])
+  const [quickLinks, setQuickLinks] = useState<QuickLink[]>([])
+  const [showAddLink, setShowAddLink] = useState(false)
+  const [newLink, setNewLink] = useState({ title: '', url: '' })
 
   useEffect(() => {
     getConversations().then((convs) => setConversations(convs.slice(0, 5)))
+    chrome.storage.local.get('quickLinks').then((result) => {
+      const stored = result.quickLinks as QuickLink[] | undefined
+      setQuickLinks(stored && stored.length > 0 ? stored : DEFAULT_LINKS)
+    })
   }, [])
 
   const handleAction = (message: string) => {
-    // Open the sidepanel and send a message via background
     chrome.runtime.sendMessage({
       type: 'open-sidepanel',
       message,
@@ -44,6 +74,38 @@ export function NewTabPage() {
       type: 'open-sidepanel',
       conversationId: conv.id,
     })
+  }
+
+  const handleDeleteConversation = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    await deleteConversation(id)
+    setConversations((prev) => prev.filter((c) => c.id !== id))
+  }
+
+  const handleAddLink = async () => {
+    if (!newLink.url) return
+    let url = newLink.url
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://' + url
+    }
+    const link: QuickLink = {
+      id: Date.now().toString(36),
+      title: newLink.title || new URL(url).hostname,
+      url,
+    }
+    const updated = [...quickLinks, link]
+    setQuickLinks(updated)
+    await chrome.storage.local.set({ quickLinks: updated })
+    setNewLink({ title: '', url: '' })
+    setShowAddLink(false)
+  }
+
+  const handleDeleteLink = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    e.preventDefault()
+    const updated = quickLinks.filter((l) => l.id !== id)
+    setQuickLinks(updated)
+    await chrome.storage.local.set({ quickLinks: updated })
   }
 
   const formatDate = (ts: number) => {
@@ -58,67 +120,169 @@ export function NewTabPage() {
   return (
     <div className="flex min-h-screen flex-col items-center bg-background text-foreground">
       {/* Hero */}
-      <div className="mt-[15vh] flex flex-col items-center gap-4 animate-fade-in-up">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-orange/10">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent-orange)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 2L2 7l10 5 10-5-10-5z" />
-            <path d="M2 17l10 5 10-5" />
-            <path d="M2 12l10 5 10-5" />
-          </svg>
-        </div>
-        <h1 className="text-2xl font-bold text-foreground">Open Agent</h1>
-        <p className="text-sm text-muted-foreground">
-          Your AI-powered browser assistant
+      <div className="mt-[12vh] flex flex-col items-center gap-3 animate-fade-in-up">
+        <h1 className="text-[15px] font-mono font-medium uppercase tracking-[0.2em] text-foreground/90">
+          Iris
+        </h1>
+        <p className="text-[11px] font-mono text-muted-foreground/60">
+          // viewport control
         </p>
       </div>
 
       {/* Quick Actions */}
-      <div className="mt-10 w-full max-w-xl px-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="mt-10 w-full max-w-lg px-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-border/50">
           {QUICK_ACTIONS.map((action) => {
             const Icon = action.icon
             return (
               <button
                 key={action.title}
                 onClick={() => handleAction(action.message)}
-                className="group flex flex-col items-start gap-2 rounded-xl border border-border bg-card p-4 text-left transition-all duration-200 hover:border-primary/40 hover:shadow-sm"
+                className="group flex flex-col items-start gap-1.5 bg-background p-4 text-left hover:bg-muted/40 transition-colors duration-150"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-orange/10 group-hover:bg-accent-orange/20 transition-colors">
-                  <Icon className="h-4 w-4 text-accent-orange" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-foreground">{action.title}</p>
-                  <p className="text-[11px] text-muted-foreground">{action.subtitle}</p>
-                </div>
+                <Icon className="h-3.5 w-3.5 text-muted-foreground/45 group-hover:text-primary/70 transition-colors" />
+                <p className="text-[11px] font-medium text-foreground/85">{action.title}</p>
+                <p className="text-[10px] text-muted-foreground/50">{action.subtitle}</p>
               </button>
             )
           })}
         </div>
       </div>
 
+      {/* Quick Links */}
+      <div className="mt-10 w-full max-w-lg px-8 animate-fade-in-up" style={{ animationDelay: '150ms' }}>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground/50">
+            Quick Links
+          </h2>
+          <button
+            onClick={() => setShowAddLink(!showAddLink)}
+            className="flex items-center gap-1 text-[10px] text-muted-foreground/40 hover:text-primary/70 transition-colors"
+          >
+            <PlusIcon className="h-3 w-3" />
+            Add
+          </button>
+        </div>
+
+        {/* Add link form */}
+        {showAddLink && (
+          <div className="mb-3 p-3 border border-border/40 animate-fade-in-up">
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                value={newLink.title}
+                onChange={(e) => setNewLink({ ...newLink, title: e.target.value })}
+                placeholder="Title (optional)"
+                className="flex-1 border-b border-border/40 bg-transparent px-0 py-1 text-[11px] text-foreground outline-none placeholder:text-muted-foreground/35"
+              />
+              <input
+                type="text"
+                value={newLink.url}
+                onChange={(e) => setNewLink({ ...newLink, url: e.target.value })}
+                placeholder="URL"
+                className="flex-1 border-b border-border/40 bg-transparent px-0 py-1 text-[11px] text-foreground outline-none placeholder:text-muted-foreground/35"
+                onKeyDown={(e) => e.key === 'Enter' && handleAddLink()}
+                autoFocus
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={handleAddLink}
+                disabled={!newLink.url}
+                className={cn(
+                  'px-2 py-1 text-[10px] font-mono transition-all',
+                  newLink.url
+                    ? 'bg-primary/15 text-primary border border-primary/30 hover:bg-primary/20'
+                    : 'text-muted-foreground/40 border border-border/30',
+                )}
+              >
+                Save
+              </button>
+              <button
+                onClick={() => { setShowAddLink(false); setNewLink({ title: '', url: '' }) }}
+                className="px-2 py-1 text-[10px] text-muted-foreground/50 hover:text-foreground"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Links grid */}
+        <div className="grid grid-cols-4 gap-3">
+          {quickLinks.map((link) => (
+            <a
+              key={link.id}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative flex flex-col items-center gap-1.5 p-3 hover:bg-muted/30 transition-colors"
+            >
+              <div className="h-8 w-8 flex items-center justify-center bg-muted/50 rounded-lg">
+                {getFaviconUrl(link.url) ? (
+                  <img
+                    src={getFaviconUrl(link.url)}
+                    alt=""
+                    className="h-4 w-4"
+                    onError={(e) => {
+                      ;(e.target as HTMLImageElement).style.display = 'none'
+                      ;(e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden')
+                    }}
+                  />
+                ) : null}
+                <LinkIcon className={cn(
+                  "h-4 w-4 text-muted-foreground/40",
+                  getFaviconUrl(link.url) ? 'hidden' : '',
+                )} />
+              </div>
+              <p className="text-[10px] text-foreground/70 truncate w-full text-center">
+                {link.title}
+              </p>
+              <button
+                onClick={(e) => handleDeleteLink(e, link.id)}
+                className="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center text-muted-foreground/0 group-hover:text-muted-foreground/50 hover:text-destructive/70 transition-all"
+              >
+                <TrashIcon className="h-2.5 w-2.5" />
+              </button>
+            </a>
+          ))}
+        </div>
+      </div>
+
       {/* Recent Conversations */}
       {conversations.length > 0 && (
-        <div className="mt-10 w-full max-w-xl px-6 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-            Recent Conversations
+        <div className="mt-10 w-full max-w-lg px-8 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+          <h2 className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground/50 mb-2">
+            Recent
           </h2>
-          <div className="rounded-xl border border-border bg-card divide-y divide-border">
+          <div className="divide-y divide-border/30">
             {conversations.map((conv) => (
-              <button
+              <div
                 key={conv.id}
-                onClick={() => handleConversationClick(conv)}
-                className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-accent/50 transition-colors"
+                className="group flex items-center gap-2.5 py-2.5 hover:bg-muted/30 transition-colors"
               >
-                <MessageSquareIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-foreground truncate">
-                    {conv.title || 'Untitled'}
-                  </p>
-                  <p className="text-[11px] text-muted-foreground">
-                    {conv.messages.length} messages &middot; {formatDate(conv.updatedAt)}
-                  </p>
-                </div>
-              </button>
+                <button
+                  onClick={() => handleConversationClick(conv)}
+                  className="flex flex-1 items-center gap-2.5 text-left min-w-0"
+                >
+                  <MessageSquareIcon className="h-3 w-3 shrink-0 text-muted-foreground/40" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[12px] font-medium text-foreground/80 truncate">
+                      {conv.title || 'Untitled'}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground/45">
+                      {conv.messages.length} msg &middot; {formatDate(conv.updatedAt)}
+                    </p>
+                  </div>
+                </button>
+                <button
+                  onClick={(e) => handleDeleteConversation(e, conv.id)}
+                  className="flex h-5 w-5 items-center justify-center shrink-0 text-muted-foreground/0 group-hover:text-muted-foreground/40 hover:text-destructive/70 transition-all duration-150"
+                  title="Delete conversation"
+                >
+                  <TrashIcon className="h-3 w-3" />
+                </button>
+              </div>
             ))}
           </div>
         </div>
@@ -126,8 +290,8 @@ export function NewTabPage() {
 
       {/* Footer hint */}
       <div className="mt-auto mb-6 animate-fade-in" style={{ animationDelay: '400ms' }}>
-        <p className="text-[11px] text-muted-foreground">
-          Click the extension icon or press the sidepanel shortcut to start chatting
+        <p className="text-[10px] font-mono text-muted-foreground/40">
+          click icon or press sidepanel shortcut
         </p>
       </div>
     </div>

@@ -1,5 +1,7 @@
 import type { ChatMessage as ChatMessageType } from '../../core/types'
 import { MessageToolCall, MessageToolResult, MessageResponse } from './ai-elements/message'
+import { Shimmer } from './ai-elements/shimmer'
+import { Reasoning } from './ai-elements/reasoning'
 import { cn } from '../../lib/utils'
 
 interface Props {
@@ -35,6 +37,14 @@ export function ChatMessage({ message, index }: Props) {
           <p>{message.content}</p>
         ) : (
           <>
+            {/* Reasoning panel */}
+            {message.reasoning && (
+              <Reasoning
+                content={message.reasoning}
+                isStreaming={message.isStreaming}
+              />
+            )}
+
             {/* 工具调用状态 */}
             {hasToolCalls && (
               <div className="space-y-1.5">
@@ -57,7 +67,9 @@ export function ChatMessage({ message, index }: Props) {
 
             {/* 文本内容 */}
             {message.content ? (
-              <MessageResponse>{message.content}</MessageResponse>
+              <Shimmer active={message.isStreaming}>
+                <MessageResponse>{message.content}</MessageResponse>
+              </Shimmer>
             ) : hasToolCalls ? (
               <span className="inline-flex items-center gap-1.5 text-muted-foreground/60 text-xs">
                 <span className="inline-block h-1 w-1 rounded-full bg-primary/50 animate-pulse" />

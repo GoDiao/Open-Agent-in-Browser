@@ -83,6 +83,8 @@ export interface ChatMessage {
   tool_call_id?: string
   tool_calls?: ToolCall[]
   toolResult?: string
+  reasoning?: string
+  isStreaming?: boolean
 }
 
 export interface ToolCall {
@@ -127,12 +129,15 @@ export type ExtensionMessage =
 
 // ─── Storage Schema ───
 
-export type ThemeId = 'cyber-obsidian' | 'industrial-bauhaus' | 'analog-laboratory'
+export type ThemeId = 'cyber-obsidian' | 'industrial-bauhaus' | 'analog-laboratory' | 'monochrome-plex'
+
+export type ProviderId = 'openai' | 'anthropic' | 'ollama' | 'custom'
 
 export interface StorageConfig {
   endpoint: string
   apiKey: string
   model: string
+  provider?: ProviderId
   theme?: ThemeId
 }
 

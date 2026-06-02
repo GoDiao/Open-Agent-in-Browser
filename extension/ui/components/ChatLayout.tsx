@@ -1,4 +1,4 @@
-import { SettingsIcon, TrashIcon } from 'lucide-react'
+import { SettingsIcon, TrashIcon, HistoryIcon, ClockIcon, UserIcon, MessageSquareIcon } from 'lucide-react'
 import type { ChatMessage } from '../../core/types'
 import { ChatInput } from './ChatInput'
 import { ChatMessages } from './ChatMessages'
@@ -13,6 +13,10 @@ interface Props {
   onStop: () => void
   onClear: () => void
   onOpenSettings: () => void
+  onOpenHistory: () => void
+  onOpenScheduler: () => void
+  onOpenProfiles: () => void
+  onOpenConversations: () => void
 }
 
 export function ChatLayout({
@@ -24,6 +28,10 @@ export function ChatLayout({
   onStop,
   onClear,
   onOpenSettings,
+  onOpenHistory,
+  onOpenScheduler,
+  onOpenProfiles,
+  onOpenConversations,
 }: Props) {
   return (
     <div className="flex h-screen flex-col bg-background text-foreground">
@@ -44,11 +52,39 @@ export function ChatLayout({
         </div>
         <div className="flex items-center gap-0.5">
           <button
+            onClick={onOpenConversations}
+            className="flex h-7 w-7 items-center justify-center text-muted-foreground/60 hover:text-foreground/80 transition-colors duration-150"
+            title="Conversations"
+          >
+            <MessageSquareIcon className="h-3.5 w-3.5" />
+          </button>
+          <button
             onClick={onClear}
             className="flex h-7 w-7 items-center justify-center text-muted-foreground/60 hover:text-foreground/80 transition-colors duration-150"
             title="Clear conversation"
           >
             <TrashIcon className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={onOpenHistory}
+            className="flex h-7 w-7 items-center justify-center text-muted-foreground/60 hover:text-foreground/80 transition-colors duration-150"
+            title="Execution history"
+          >
+            <HistoryIcon className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={onOpenScheduler}
+            className="flex h-7 w-7 items-center justify-center text-muted-foreground/60 hover:text-foreground/80 transition-colors duration-150"
+            title="Scheduled tasks"
+          >
+            <ClockIcon className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={onOpenProfiles}
+            className="flex h-7 w-7 items-center justify-center text-muted-foreground/60 hover:text-foreground/80 transition-colors duration-150"
+            title="Agent profiles"
+          >
+            <UserIcon className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={onOpenSettings}
