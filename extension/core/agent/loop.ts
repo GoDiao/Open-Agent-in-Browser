@@ -6,6 +6,7 @@ import { needsCompaction, compactMessages } from './compaction'
 import { buildSystemPrompt } from './prompt'
 import { createProvider } from './provider'
 import { addExecutionRecord } from '../../lib/history'
+import { getMemorySnapshot } from '../../lib/memory'
 
 // Import all tools
 import { close_page, go_back, go_forward, list_pages, navigate, new_page, reload } from '../tools/navigation'
@@ -22,6 +23,7 @@ import { get_dom, search_dom } from '../tools/dom'
 import { read_file_from_page, get_page_links, get_page_images, extract_structured_data, download_text } from '../tools/file'
 import { get_cookies, set_cookie, delete_cookies, clear_cookies, get_local_storage, set_local_storage, remove_local_storage, get_session_storage } from '../tools/storage'
 import { emulate_device, list_devices, set_viewport, set_geolocation, set_timezone, emulate_media, set_user_agent, throttle_cpu } from '../tools/emulation'
+import { update_memory } from '../tools/memory'
 import { toolToJsonSchema } from '../tools/framework'
 
 export interface AgentCallbacks {
@@ -37,7 +39,7 @@ export class AgentLoop {
   private cdp: CDPClient
   private registry = createRegistry()
   private provider
-  private config: LLMConfig
+  readonly config: LLMConfig
 
   constructor(config: LLMConfig) {
     this.cdp = createCDPClient()
@@ -76,6 +78,8 @@ export class AgentLoop {
       get_cookies, set_cookie, delete_cookies, clear_cookies, get_local_storage, set_local_storage, remove_local_storage, get_session_storage,
       // Emulation (8)
       emulate_device, list_devices, set_viewport, set_geolocation, set_timezone, emulate_media, set_user_agent, throttle_cpu,
+      // Memory (1)
+      update_memory,
     ]
     for (const tool of tools) {
       this.registry.register(tool)
@@ -109,7 +113,10 @@ export class AgentLoop {
       }
     }
 
-    const systemPrompt = buildSystemPrompt(this.registry.getEnabled(), pageContext)
+    // Get frozen snapshot for system prompt injection (loaded at App mount)
+    const memorySnapshot = getMemorySnapshot()
+
+    const systemPrompt = buildSystemPrompt(this.registry.getEnabled(), pageContext, memorySnapshot)
     const messages: ChatMessage[] = [
       { role: 'system', content: systemPrompt },
       ...compactedHistory,
@@ -211,7 +218,7 @@ export class AgentLoop {
       }
     }
 
-    const ctx = { cdp: this.cdp, tabId }
+    const ctx = { cdp: this.cdp, tabId, config: this.config }
     const response = new ToolResponse()
     const startTime = Date.now()
 

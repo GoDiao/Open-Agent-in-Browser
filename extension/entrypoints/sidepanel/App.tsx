@@ -6,11 +6,13 @@ import { ExecutionHistory } from '../../ui/components/ExecutionHistory'
 import { Scheduler } from '../../ui/components/Scheduler'
 import { AgentProfiles } from '../../ui/components/AgentProfiles'
 import { ConversationList } from '../../ui/components/ConversationList'
+import { MemoryPanel } from '../../ui/components/MemoryPanel'
 import { useChat } from '../../ui/hooks/useChat'
 import { getTheme, applyTheme, getConfig } from '../../lib/storage'
+import { loadMemory } from '../../lib/memory'
 
 export function App() {
-  const [view, setView] = useState<'chat' | 'settings' | 'onboarding' | 'history' | 'scheduler' | 'profiles' | 'conversations'>('chat')
+  const [view, setView] = useState<'chat' | 'settings' | 'onboarding' | 'history' | 'scheduler' | 'profiles' | 'conversations' | 'memory'>('chat')
   const {
     messages,
     isStreaming,
@@ -23,9 +25,10 @@ export function App() {
     handleBackgroundMessage,
   } = useChat()
 
-  // Apply theme on mount, check onboarding, and handle pending actions
+  // Apply theme on mount, load memory, check onboarding, and handle pending actions
   useEffect(() => {
     getTheme().then(applyTheme)
+    loadMemory()
     getConfig().then((config) => {
       if (!config.apiKey && config.provider !== 'ollama') {
         setView('onboarding')
@@ -72,6 +75,10 @@ export function App() {
     return <AgentProfiles onClose={() => setView('chat')} />
   }
 
+  if (view === 'memory') {
+    return <MemoryPanel onClose={() => setView('chat')} />
+  }
+
   if (view === 'conversations') {
     return (
       <ConversationList
@@ -98,6 +105,7 @@ export function App() {
       onOpenScheduler={() => setView('scheduler')}
       onOpenProfiles={() => setView('profiles')}
       onOpenConversations={() => setView('conversations')}
+      onOpenMemory={() => setView('memory')}
     />
   )
 }

@@ -1,4 +1,4 @@
-import { SettingsIcon, TrashIcon, HistoryIcon, ClockIcon, UserIcon, MessageSquareIcon } from 'lucide-react'
+import { SettingsIcon, TrashIcon, HistoryIcon, ClockIcon, UserIcon, MessageSquareIcon, BrainIcon } from 'lucide-react'
 import type { ChatMessage } from '../../core/types'
 import { ChatInput } from './ChatInput'
 import { ChatMessages } from './ChatMessages'
@@ -17,6 +17,7 @@ interface Props {
   onOpenScheduler: () => void
   onOpenProfiles: () => void
   onOpenConversations: () => void
+  onOpenMemory: () => void
 }
 
 export function ChatLayout({
@@ -32,6 +33,7 @@ export function ChatLayout({
   onOpenScheduler,
   onOpenProfiles,
   onOpenConversations,
+  onOpenMemory,
 }: Props) {
   return (
     <div className="flex h-screen flex-col bg-background text-foreground">
@@ -85,6 +87,13 @@ export function ChatLayout({
             title="Agent profiles"
           >
             <UserIcon className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={onOpenMemory}
+            className="flex h-7 w-7 items-center justify-center text-muted-foreground/60 hover:text-foreground/80 transition-colors duration-150"
+            title="Memory"
+          >
+            <BrainIcon className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={onOpenSettings}

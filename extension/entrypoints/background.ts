@@ -2,9 +2,11 @@ import { AgentLoop } from '../core/agent/loop'
 import { getConfig } from '../lib/storage'
 import type { ChatMessage, ExtensionMessage } from '../core/types'
 import { getScheduledTasks, updateScheduledTask, syncAlarms } from '../lib/scheduler'
+import { reviewAndExtractMemory } from '../core/agent/memory-review'
 
 let agent: AgentLoop | null = null
 let activeConversationId: string | null = null
+let memoryReviewTimer: ReturnType<typeof setTimeout> | null = null
 
 function sendToUI(message: Record<string, unknown>) {
   chrome.runtime.sendMessage(message).catch(() => {
@@ -85,7 +87,7 @@ async function handleChatMessage(text: string, history: ChatMessage[]) {
       })
     }
 
-    await agentLoop.run(text, history, {
+    const newMessages = await agentLoop.run(text, history, {
       onStream: (chunk) => {
         sendToUI({ type: 'chat:stream', chunk })
       },
@@ -116,6 +118,14 @@ async function handleChatMessage(text: string, history: ChatMessage[]) {
         }
       },
     })
+
+    // Background memory review — debounced (only runs after last turn in conversation)
+    if (memoryReviewTimer) clearTimeout(memoryReviewTimer)
+    const fullHistory = [...history, ...newMessages]
+    const configForReview = agentLoop.config
+    memoryReviewTimer = setTimeout(() => {
+      reviewAndExtractMemory(fullHistory, configForReview).catch(() => {})
+    }, 30_000) // 30s debounce — only reviews after conversation goes idle
   } catch (err) {
     const error = err instanceof Error ? err.message : String(err)
     sendToUI({ type: 'chat:error', error })

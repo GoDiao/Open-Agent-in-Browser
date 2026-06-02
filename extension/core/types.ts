@@ -18,6 +18,7 @@ export type ToolHandler = (
 export interface ToolContext {
   cdp: CDPClient
   tabId: number
+  config?: LLMConfig
 }
 
 // ─── Tool Response (builder pattern, from BrowserOS) ───
