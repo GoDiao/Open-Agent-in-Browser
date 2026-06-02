@@ -9,32 +9,31 @@ interface MemorySnapshot {
 
 const REQUIRED_FIELDS = ['name', 'timezone', 'language'] as const
 
-function buildColdStartPrompt(userFields?: UserFields): string {
-  // No fields object → full cold start
-  if (!userFields) {
-    return `
-## Cold Start — First Meeting
-You have no information about this user. On your FIRST response, briefly introduce yourself and ask:
-- What should I call you?
-- What timezone are you in?
-- Do you prefer Chinese or English?
-Keep it light — 2-3 questions max.
-Save answers with update_memory: action="set_user_field" for each field.`
-  }
+function buildColdStartPrompt(userFields: UserFields | undefined, userSnapshot: string): string {
+  // Check fields from structured data AND from entry text
+  const nameKnown = !!userFields?.name?.trim() || /Name:\s*\S/i.test(userSnapshot)
+  const timezoneKnown = !!userFields?.timezone?.trim() || /Timezone:\s*\S/i.test(userSnapshot)
+  const languageKnown = !!userFields?.language?.trim() || /Language:\s*\S/i.test(userSnapshot)
 
-  // Check which required fields are missing
-  const missing = REQUIRED_FIELDS.filter(f => !userFields[f]?.trim())
-  const filled = REQUIRED_FIELDS.filter(f => userFields[f]?.trim())
+  const known = { name: nameKnown, timezone: timezoneKnown, language: languageKnown }
+  const allKnown = nameKnown && timezoneKnown && languageKnown
 
   // All required fields filled → no cold start
-  if (missing.length === 0) return ''
+  if (allKnown) return ''
+
+  // Build missing list
+  const missing: string[] = []
+  if (!nameKnown) missing.push('name')
+  if (!timezoneKnown) missing.push('timezone')
+  if (!languageKnown) missing.push('language')
 
   // Build explicit field status
   const statusLines: string[] = []
-  if (filled.length > 0) {
+  const knownFields = Object.entries(known).filter(([_, v]) => v)
+  if (knownFields.length > 0) {
     statusLines.push(`Already known (DO NOT ask again):`)
-    for (const f of filled) {
-      statusLines.push(`- ${f}: ${userFields[f]}`)
+    for (const [key] of knownFields) {
+      statusLines.push(`- ${key}`)
     }
   }
   statusLines.push(``)
@@ -68,7 +67,7 @@ export function buildSystemPrompt(
     ? [memorySnapshot.user, memorySnapshot.memory].filter(Boolean).join('\n\n')
     : ''
 
-  const coldStart = buildColdStartPrompt(memorySnapshot?.userFields)
+  const coldStart = buildColdStartPrompt(memorySnapshot?.userFields, memorySnapshot?.user || '')
 
   return `You are Iris. A browser personal assistant with persistent memory.
 
