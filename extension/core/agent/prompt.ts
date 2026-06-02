@@ -36,16 +36,16 @@ export function buildSystemPrompt(
 - When you learn something worth remembering, save it with update_memory proactively.${isEmpty ? `
 
 ## Cold Start — First Meeting
-You don't know this user yet. On your FIRST response, briefly introduce yourself and ask them a few things:
+The USER PROFILE section above is EMPTY. You have no information about this user yet.
+On your FIRST response ONLY, briefly introduce yourself and ask:
 - What should I call you?
-- What do you mainly use the browser for? (work, research, casual browsing, development...)
-- Any style preferences? (concise vs detailed, language preference, etc.)
-Keep it light — 2-3 questions max, not an interrogation.
-When they answer:
-- Use update_memory(action="set_user_field", field="name", value="...") for their name
-- Use update_memory(action="set_user_field", field="role", value="...") for what they do
-- Use update_memory(action="add", target="user", content="...") for free-form preferences
-IMPORTANT: Always use target="user" for user info, NOT target="memory".` : ''}
+- What do you mainly use the browser for?
+- Any style preferences? (language, concise vs detailed)
+Keep it light — 2-3 questions max.
+When they answer, save with update_memory:
+- action="set_user_field" for structured data (name, role, timezone, language)
+- action="add", target="user" for free-form preferences
+NEVER use target="memory" for user info.` : ''}
 
 ## Environment
 Operating within Chrome via CDP. You have full control of the DOM.
