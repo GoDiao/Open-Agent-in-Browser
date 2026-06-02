@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
-import { GlobeIcon, CameraIcon, FileTextIcon, MessageSquareIcon, TrashIcon, PlusIcon, LinkIcon } from 'lucide-react'
+import { GlobeIcon, CameraIcon, FileTextIcon, MessageSquareIcon, TrashIcon, PlusIcon, LinkIcon, ClockIcon, ArrowUpIcon } from 'lucide-react'
 import type { Conversation } from '../../core/types'
+import type { ScheduledTask } from '../../lib/scheduler'
 import { getConversations, deleteConversation } from '../../lib/storage'
+import { loadMemory, getUserFields } from '../../lib/memory'
+import { getScheduledTasks, formatSchedule, formatNextRun } from '../../lib/scheduler'
 import { cn } from '../../lib/utils'
 
 interface QuickLink {
@@ -48,17 +51,39 @@ function getFaviconUrl(url: string): string {
   }
 }
 
+function getGreeting(): string {
+  const hour = new Date().getHours()
+  if (hour < 6) return 'Good night'
+  if (hour < 12) return 'Good morning'
+  if (hour < 18) return 'Good afternoon'
+  return 'Good evening'
+}
+
 export function NewTabPage() {
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [quickLinks, setQuickLinks] = useState<QuickLink[]>([])
   const [showAddLink, setShowAddLink] = useState(false)
   const [newLink, setNewLink] = useState({ title: '', url: '' })
+  const [userName, setUserName] = useState('')
+  const [tasks, setTasks] = useState<ScheduledTask[]>([])
+  const [quickInput, setQuickInput] = useState('')
 
   useEffect(() => {
     getConversations().then((convs) => setConversations(convs.slice(0, 5)))
     chrome.storage.local.get('quickLinks').then((result) => {
       const stored = result.quickLinks as QuickLink[] | undefined
       setQuickLinks(stored && stored.length > 0 ? stored : DEFAULT_LINKS)
+    })
+
+    // Load user name from memory
+    loadMemory().then(() => {
+      const fields = getUserFields()
+      setUserName(fields.nickname || fields.name || '')
+    })
+
+    // Load scheduled tasks
+    getScheduledTasks().then((all) => {
+      setTasks(all.filter(t => t.enabled).slice(0, 3))
     })
   }, [])
 
@@ -67,6 +92,16 @@ export function NewTabPage() {
       type: 'open-sidepanel',
       message,
     })
+  }
+
+  const handleQuickSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!quickInput.trim()) return
+    chrome.runtime.sendMessage({
+      type: 'open-sidepanel',
+      message: quickInput.trim(),
+    })
+    setQuickInput('')
   }
 
   const handleConversationClick = (conv: Conversation) => {
@@ -119,18 +154,41 @@ export function NewTabPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-background text-foreground">
-      {/* Hero */}
+      {/* Hero — Greeting */}
       <div className="mt-[12vh] flex flex-col items-center gap-3 animate-fade-in-up">
         <h1 className="text-[15px] font-mono font-medium uppercase tracking-[0.2em] text-foreground/90">
-          Iris
+          {getGreeting()}{userName ? `, ${userName}` : ''}
         </h1>
         <p className="text-[11px] font-mono text-muted-foreground/60">
-          // viewport control
+          {new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
         </p>
       </div>
 
+      {/* Quick Input */}
+      <div className="mt-6 w-full max-w-lg px-8 animate-fade-in-up" style={{ animationDelay: '50ms' }}>
+        <form onSubmit={handleQuickSubmit} className="chat-input-wrapper border border-border/40">
+          <div className="flex items-center h-10 px-4">
+            <span className="text-primary/50 select-none text-xs mr-2">▸</span>
+            <input
+              type="text"
+              value={quickInput}
+              onChange={(e) => setQuickInput(e.target.value)}
+              placeholder="Ask Iris anything..."
+              className="flex-1 bg-transparent text-[13px] text-foreground outline-none placeholder:text-muted-foreground/40"
+            />
+            <button
+              type="submit"
+              disabled={!quickInput.trim()}
+              className="flex h-6 w-6 items-center justify-center text-muted-foreground/40 hover:text-foreground disabled:opacity-20 transition-all duration-150"
+            >
+              <ArrowUpIcon className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </form>
+      </div>
+
       {/* Quick Actions */}
-      <div className="mt-10 w-full max-w-lg px-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+      <div className="mt-8 w-full max-w-lg px-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-border/50">
           {QUICK_ACTIONS.map((action) => {
             const Icon = action.icon
@@ -150,7 +208,7 @@ export function NewTabPage() {
       </div>
 
       {/* Quick Links */}
-      <div className="mt-10 w-full max-w-lg px-8 animate-fade-in-up" style={{ animationDelay: '150ms' }}>
+      <div className="mt-8 w-full max-w-lg px-8 animate-fade-in-up" style={{ animationDelay: '150ms' }}>
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground/50">
             Quick Links
@@ -249,9 +307,33 @@ export function NewTabPage() {
         </div>
       </div>
 
+      {/* Scheduled Tasks */}
+      {tasks.length > 0 && (
+        <div className="mt-8 w-full max-w-lg px-8 animate-fade-in-up" style={{ animationDelay: '175ms' }}>
+          <h2 className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground/50 mb-2">
+            Scheduled Tasks
+          </h2>
+          <div className="divide-y divide-border/30">
+            {tasks.map((task) => (
+              <div key={task.id} className="flex items-center gap-2.5 py-2">
+                <ClockIcon className="h-3 w-3 shrink-0 text-muted-foreground/40" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-medium text-foreground/80 truncate">
+                    {task.name || task.prompt.slice(0, 40)}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground/45">
+                    {formatSchedule(task.schedule)} · {formatNextRun(task.nextRun)}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Recent Conversations */}
       {conversations.length > 0 && (
-        <div className="mt-10 w-full max-w-lg px-8 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+        <div className="mt-8 w-full max-w-lg px-8 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
           <h2 className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground/50 mb-2">
             Recent
           </h2>
