@@ -18,6 +18,7 @@ interface Props {
   onOpenProfiles: () => void
   onOpenConversations: () => void
   onOpenMemory: () => void
+  memoryLoaded?: boolean
 }
 
 export function ChatLayout({
@@ -34,6 +35,7 @@ export function ChatLayout({
   onOpenProfiles,
   onOpenConversations,
   onOpenMemory,
+  memoryLoaded = true,
 }: Props) {
   return (
     <div className="flex h-screen flex-col bg-background text-foreground">
@@ -124,7 +126,7 @@ export function ChatLayout({
       <ChatInput
         onSend={onSend}
         onStop={onStop}
-        disabled={false}
+        disabled={!memoryLoaded}
         isStreaming={isStreaming}
       />
     </div>

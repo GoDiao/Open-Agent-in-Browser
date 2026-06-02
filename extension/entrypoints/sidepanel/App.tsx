@@ -27,10 +27,12 @@ export function App() {
 
   const [pendingMessage, setPendingMessage] = useState<string | null>(null)
 
+  const [memoryLoaded, setMemoryLoaded] = useState(false)
+
   // Apply theme on mount, load memory, check onboarding, and handle pending actions
   useEffect(() => {
     getTheme().then(applyTheme)
-    loadMemory()
+    loadMemory().then(() => setMemoryLoaded(true))
     getConfig().then((config) => {
       if (!config.apiKey && config.provider !== 'ollama') {
         setView('onboarding')
@@ -122,6 +124,7 @@ export function App() {
       onOpenProfiles={() => setView('profiles')}
       onOpenConversations={() => setView('conversations')}
       onOpenMemory={() => setView('memory')}
+      memoryLoaded={memoryLoaded}
     />
   )
 }

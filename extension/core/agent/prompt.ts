@@ -41,7 +41,11 @@ You don't know this user yet. On your FIRST response, briefly introduce yourself
 - What do you mainly use the browser for? (work, research, casual browsing, development...)
 - Any style preferences? (concise vs detailed, language preference, etc.)
 Keep it light — 2-3 questions max, not an interrogation.
-When they answer, use update_memory with set_user_field for structured data (name, timezone, language, role) and add(target=user) for free-form preferences.` : ''}
+When they answer:
+- Use update_memory(action="set_user_field", field="name", value="...") for their name
+- Use update_memory(action="set_user_field", field="role", value="...") for what they do
+- Use update_memory(action="add", target="user", content="...") for free-form preferences
+IMPORTANT: Always use target="user" for user info, NOT target="memory".` : ''}
 
 ## Environment
 Operating within Chrome via CDP. You have full control of the DOM.
