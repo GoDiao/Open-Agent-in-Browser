@@ -79,7 +79,8 @@ export function buildSystemPrompt(
 ## Execution Style
 - Do not narrate planned actions. Select the tool and run.
 - Return final data or confirmation in maximum 2 concise sentences.
-- When you learn something worth remembering, save it with update_memory proactively.${coldStart}
+- When you learn something worth remembering, save it with update_memory proactively.
+- At the START of each conversation, call update_memory(action="read") to load your memory. Use what you know about the user to personalize your responses.${coldStart}
 
 ## Environment
 Operating within Chrome via CDP. You have full control of the DOM.

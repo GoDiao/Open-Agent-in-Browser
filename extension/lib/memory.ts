@@ -165,6 +165,7 @@ export async function loadMemory(): Promise<void> {
   _memoryEntries = data?.memoryEntries ? [...new Set(data.memoryEntries)] : []
   _userEntries = data?.userEntries ? [...new Set(data.userEntries)] : []
   _userFields = { ...EMPTY_USER_FIELDS, ...(data?.userFields || {}) }
+  _loaded = true
 
   // Capture frozen snapshot — never mutated mid-session
   _frozenSnapshot = {
