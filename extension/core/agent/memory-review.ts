@@ -10,6 +10,7 @@ import type { ChatMessage, LLMConfig } from '../types'
 import { createProvider } from './provider'
 import { addEntry, replaceEntry, removeEntry, setUserField } from '../../lib/memory'
 import type { MemoryTarget } from '../../lib/memory'
+import { getConfig } from '../../lib/storage'
 
 const REVIEW_PROMPT = `You are a memory extraction system. Review the following conversation and identify facts worth remembering for future sessions.
 
@@ -48,6 +49,10 @@ export async function reviewAndExtractMemory(
   history: ChatMessage[],
   config: LLMConfig,
 ): Promise<void> {
+  // Check if auto memory review is enabled
+  const configSnapshot = await getConfig()
+  if (configSnapshot.autoMemoryReview === false) return
+
   // Need at least 2 messages (user + assistant) to review
   if (history.length < 2) return
 

@@ -140,6 +140,7 @@ export interface StorageConfig {
   model: string
   provider?: ProviderId
   theme?: ThemeId
+  autoMemoryReview?: boolean
 }
 
 export interface Conversation {

@@ -4,6 +4,7 @@ const DEFAULT_CONFIG: StorageConfig = {
   endpoint: 'https://api.openai.com/v1',
   apiKey: '',
   model: 'gpt-4o',
+  autoMemoryReview: true,
 }
 
 export async function getConfig(): Promise<StorageConfig> {

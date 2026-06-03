@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, ChevronDownIcon } from 'lucide-react'
+import { ArrowLeftIcon, ChevronDownIcon, BrainIcon, InfoIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import type { StorageConfig, ThemeId, ProviderId } from '../../core/types'
 import { cn } from '../../lib/utils'
@@ -167,6 +167,34 @@ export function Settings({ onClose }: Props) {
           </div>
         </div>
 
+        {/* ── Privacy & Data Section ── */}
+        <div className="animate-fade-in-up space-y-2" style={{ animationDelay: '30ms' }}>
+          <label className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground/50">
+            Privacy & Data
+          </label>
+          <div className="space-y-2">
+            <label className="flex items-center justify-between p-3 border border-border/40 hover:border-border/60 transition-colors cursor-pointer">
+              <div className="flex items-center gap-2">
+                <BrainIcon className="h-4 w-4 text-primary/60" />
+                <span className="text-[12px] text-foreground/80">Auto memory extraction</span>
+              </div>
+              <input
+                type="checkbox"
+                checked={config.autoMemoryReview !== false}
+                onChange={(e) => setConfigState((c) => ({ ...c, autoMemoryReview: e.target.checked }))}
+                className="accent-primary"
+              />
+            </label>
+            <div className="flex items-start gap-2 p-2 bg-muted/20 border border-border/30">
+              <InfoIcon className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0 mt-0.5" />
+              <p className="text-[10px] text-muted-foreground/60 leading-relaxed">
+                When enabled, Iris automatically extracts and saves facts from your conversations.
+                Disable to opt out of automatic memory extraction.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* ── Provider Section ── */}
         <div className="animate-fade-in-up space-y-2" style={{ animationDelay: '60ms' }}>
           <label className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground/50">
@@ -259,6 +287,9 @@ export function Settings({ onClose }: Props) {
               config.provider === 'ollama' && "opacity-50 cursor-not-allowed"
             )}
           />
+          <p className="text-[9px] text-muted-foreground/40 mt-1">
+            Stored locally in your browser. Keep your device secure.
+          </p>
         </div>
 
         <button
