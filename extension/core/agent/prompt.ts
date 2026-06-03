@@ -1,10 +1,18 @@
 import type { ToolDefinition } from '../types'
 import type { UserFields } from '../../lib/memory'
+import { getSoulSnapshot } from '../../lib/soul'
 
 interface MemorySnapshot {
   memory: string
   user: string
   userFields?: UserFields
+}
+
+interface SoulSnapshot {
+  personality: string
+  communicationStyle: string
+  boundaries: string[]
+  preferences: string[]
 }
 
 const REQUIRED_FIELDS = ['name', 'timezone', 'language'] as const
@@ -56,6 +64,7 @@ export function buildSystemPrompt(
   tools: ToolDefinition[],
   pageContext?: { url: string; title: string },
   memorySnapshot?: MemorySnapshot,
+  soulSnapshot?: SoulSnapshot,
 ): string {
   const toolList = tools.map((t) => `- ${t.name}: ${t.description}`).join('\n')
 
@@ -68,6 +77,17 @@ export function buildSystemPrompt(
     : ''
 
   const coldStart = buildColdStartPrompt(memorySnapshot?.userFields, memorySnapshot?.user || '')
+
+  // Build soul section
+  let soulSection = ''
+  if (soulSnapshot) {
+    const parts: string[] = []
+    if (soulSnapshot.personality) parts.push(`**Personality:** ${soulSnapshot.personality}`)
+    if (soulSnapshot.communicationStyle) parts.push(`**Communication:** ${soulSnapshot.communicationStyle}`)
+    if (soulSnapshot.boundaries.length) parts.push(`**Boundaries:**\n- ${soulSnapshot.boundaries.join('\n- ')}`)
+    if (soulSnapshot.preferences.length) parts.push(`**Preferences:**\n- ${soulSnapshot.preferences.join('\n- ')}`)
+    if (parts.length > 0) soulSection = `\n\n<soul>\n${parts.join('\n\n')}\n</soul>`
+  }
 
   return `You are Iris. A browser personal assistant with persistent memory.
 
@@ -91,5 +111,5 @@ ${toolList}
 ## Constraints
 - Do not repeat user input.
 - Keep responses short and data-rich.
-- If a tool fails, retry once. If it fails again, report error concisely.${memorySection ? `\n\n${memorySection}` : ''}`
+- If a tool fails, retry once. If it fails again, report error concisely.${memorySection ? `\n\n${memorySection}` : ''}${soulSection}`
 }

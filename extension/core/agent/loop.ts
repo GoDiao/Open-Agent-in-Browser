@@ -7,6 +7,7 @@ import { buildSystemPrompt } from './prompt'
 import { createProvider } from './provider'
 import { addExecutionRecord } from '../../lib/history'
 import { getMemorySnapshot } from '../../lib/memory'
+import { getSoulSnapshot } from '../../lib/soul'
 
 // Import all tools
 import { close_page, go_back, go_forward, list_pages, navigate, new_page, reload } from '../tools/navigation'
@@ -24,6 +25,7 @@ import { read_file_from_page, get_page_links, get_page_images, extract_structure
 import { get_cookies, set_cookie, delete_cookies, clear_cookies, get_local_storage, set_local_storage, remove_local_storage, get_session_storage } from '../tools/storage'
 import { emulate_device, list_devices, set_viewport, set_geolocation, set_timezone, emulate_media, set_user_agent, throttle_cpu } from '../tools/emulation'
 import { update_memory } from '../tools/memory'
+import { update_soul } from '../tools/soul'
 import { toolToJsonSchema } from '../tools/framework'
 
 export interface AgentCallbacks {
@@ -80,6 +82,8 @@ export class AgentLoop {
       emulate_device, list_devices, set_viewport, set_geolocation, set_timezone, emulate_media, set_user_agent, throttle_cpu,
       // Memory (1)
       update_memory,
+      // Soul (1)
+      update_soul,
     ]
     for (const tool of tools) {
       this.registry.register(tool)
@@ -115,8 +119,9 @@ export class AgentLoop {
 
     // Get frozen snapshot for system prompt injection (loaded at App mount)
     const memorySnapshot = getMemorySnapshot()
+    const soulSnapshot = getSoulSnapshot()
 
-    const systemPrompt = buildSystemPrompt(this.registry.getEnabled(), pageContext, memorySnapshot)
+    const systemPrompt = buildSystemPrompt(this.registry.getEnabled(), pageContext, memorySnapshot, soulSnapshot)
     const messages: ChatMessage[] = [
       { role: 'system', content: systemPrompt },
       ...compactedHistory,

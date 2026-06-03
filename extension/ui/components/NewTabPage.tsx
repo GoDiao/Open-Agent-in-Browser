@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { GlobeIcon, CameraIcon, FileTextIcon, MessageSquareIcon, TrashIcon, PlusIcon, LinkIcon, ClockIcon, ArrowUpIcon, SearchIcon, SparklesIcon } from 'lucide-react'
+import { GlobeIcon, CameraIcon, FileTextIcon, MessageSquareIcon, TrashIcon, PlusIcon, LinkIcon, ClockIcon, ArrowUpIcon, SearchIcon, SparklesIcon, BrainIcon, HeartIcon, CommandIcon, ZapIcon } from 'lucide-react'
 import type { Conversation } from '../../core/types'
 import type { ScheduledTask } from '../../lib/scheduler'
 import { getConversations, deleteConversation } from '../../lib/storage'
 import { loadMemory, getUserFields } from '../../lib/memory'
+import { loadSoul, getSoul } from '../../lib/soul'
 import { getScheduledTasks, formatSchedule, formatNextRun } from '../../lib/scheduler'
 import { cn } from '../../lib/utils'
 
@@ -33,6 +34,34 @@ const QUICK_ACTIONS = [
     subtitle: 'Get a quick summary',
     message: 'Summarize this page',
   },
+]
+
+const SUGGESTED_COMMANDS = [
+  // Snapshot
+  { cmd: 'take screenshot', desc: 'Capture current page' },
+  { cmd: 'summarize this page', desc: 'Get a quick summary' },
+  { cmd: 'get page content', desc: 'Extract all text' },
+  // Navigation
+  { cmd: 'navigate to github.com', desc: 'Open a URL' },
+  { cmd: 'new tab', desc: 'Open a blank tab' },
+  { cmd: 'go back', desc: 'Navigate back' },
+  // Bookmarks & History
+  { cmd: 'list bookmarks', desc: 'Show all bookmarks' },
+  { cmd: 'search history for python', desc: 'Find in history' },
+  // Tabs
+  { cmd: 'list all tabs', desc: 'Show open tabs' },
+  { cmd: 'create tab group "Work"', desc: 'Group tabs' },
+  // Storage
+  { cmd: 'get cookies', desc: 'Show site cookies' },
+  { cmd: 'get local storage', desc: 'Show site storage' },
+  // Network
+  { cmd: 'show network requests', desc: 'List all requests' },
+  // Files
+  { cmd: 'get all links', desc: 'Extract page links' },
+  { cmd: 'get all images', desc: 'Extract page images' },
+  // Memory
+  { cmd: 'read my profile', desc: 'Show user profile' },
+  { cmd: 'read my SOUL', desc: 'Show AI personality' },
 ]
 
 const DEFAULT_LINKS: QuickLink[] = [
@@ -68,6 +97,9 @@ export function NewTabPage() {
   const [tasks, setTasks] = useState<ScheduledTask[]>([])
   const [quickInput, setQuickInput] = useState('')
   const [inputMode, setInputMode] = useState<'search' | 'agent'>('search')
+  const [soulData, setSoulData] = useState<{ personality: string } | null>(null)
+  const [recentSites, setRecentSites] = useState<{ url: string; title: string }[]>([])
+  const [showCommands, setShowCommands] = useState(false)
 
   useEffect(() => {
     getConversations().then((convs) => setConversations(convs.slice(0, 5)))
@@ -82,9 +114,24 @@ export function NewTabPage() {
       setUserName(fields.nickname || fields.name || '')
     })
 
+    // Load SOUL
+    loadSoul().then(() => {
+      const soul = getSoul()
+      setSoulData(soul)
+    })
+
     // Load scheduled tasks
     getScheduledTasks().then((all) => {
       setTasks(all.filter(t => t.enabled).slice(0, 3))
+    })
+
+    // Load recent visited sites from history
+    chrome.history.search({ text: '', maxResults: 15 }, (historyItems) => {
+      const sites = historyItems
+        .filter(item => item.title && item.url && !item.url.startsWith('chrome://'))
+        .slice(0, 6)
+        .map(item => ({ url: item.url!, title: item.title! }))
+      setRecentSites(sites)
     })
   }, [])
 
@@ -242,6 +289,80 @@ export function NewTabPage() {
             )
           })}
         </div>
+      </div>
+
+      {/* SOUL & Memory Quick Access */}
+      <div className="mt-6 w-full max-w-lg px-8 animate-fade-in-up" style={{ animationDelay: '120ms' }}>
+        <div className="flex gap-2">
+          <button
+            onClick={() => handleAction('Read my SOUL')}
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 border border-border/40 hover:border-primary/40 hover:bg-primary/[0.05] transition-all duration-150"
+          >
+            <HeartIcon className="h-3.5 w-3.5 text-rose-500/70" />
+            <span className="text-[11px] font-mono text-foreground/80">
+              {soulData?.personality ? soulData.personality.slice(0, 20) + '...' : 'Set SOUL'}
+            </span>
+          </button>
+          <button
+            onClick={() => handleAction('Show my profile')}
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 border border-border/40 hover:border-primary/40 hover:bg-primary/[0.05] transition-all duration-150"
+          >
+            <BrainIcon className="h-3.5 w-3.5 text-primary/70" />
+            <span className="text-[11px] font-mono text-foreground/80">
+              {userName ? `Profile: ${userName}` : 'Set Profile'}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {/* Recent Sites (from history) */}
+      {recentSites.length > 0 && (
+        <div className="mt-6 w-full max-w-lg px-8 animate-fade-in-up" style={{ animationDelay: '135ms' }}>
+          <h2 className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground/50 mb-2">
+            Recent
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {recentSites.slice(0, 6).map((site, i) => (
+              <a
+                key={i}
+                href={site.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 bg-muted/30 hover:bg-muted/50 border border-transparent hover:border-border/40 transition-all duration-150"
+              >
+                <ZapIcon className="h-3 w-3 text-muted-foreground/40" />
+                <span className="text-[10px] font-mono text-foreground/70 truncate max-w-[120px]">
+                  {new URL(site.url).hostname.replace('www.', '')}
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Quick Commands */}
+      <div className="mt-6 w-full max-w-lg px-8 animate-fade-in-up" style={{ animationDelay: '145ms' }}>
+        <button
+          onClick={() => setShowCommands(!showCommands)}
+          className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground/50 hover:text-foreground/70 transition-colors mb-2"
+        >
+          <CommandIcon className="h-3 w-3" />
+          Commands
+        </button>
+        {showCommands && (
+          <div className="grid grid-cols-2 gap-2 p-3 border border-border/40 animate-fade-in-up">
+            {SUGGESTED_COMMANDS.map((cmd, i) => (
+              <button
+                key={i}
+                onClick={() => handleAction(cmd.cmd)}
+                className="flex flex-col items-start gap-0.5 p-2 hover:bg-muted/30 transition-colors"
+              >
+                <span className="text-[11px] font-mono text-primary/80">{cmd.cmd}</span>
+                <span className="text-[9px] text-muted-foreground/50">{cmd.desc}</span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Quick Links */}

@@ -1,4 +1,4 @@
-import { SettingsIcon, TrashIcon, HistoryIcon, ClockIcon, UserIcon, MessageSquareIcon, BrainIcon } from 'lucide-react'
+import { SettingsIcon, TrashIcon, HistoryIcon, ClockIcon, UserIcon, MessageSquareIcon, BrainIcon, HeartIcon } from 'lucide-react'
 import type { ChatMessage } from '../../core/types'
 import { ChatInput } from './ChatInput'
 import { ChatMessages } from './ChatMessages'
@@ -18,6 +18,7 @@ interface Props {
   onOpenProfiles: () => void
   onOpenConversations: () => void
   onOpenMemory: () => void
+  onOpenSoul: () => void
   memoryLoaded?: boolean
 }
 
@@ -35,6 +36,7 @@ export function ChatLayout({
   onOpenProfiles,
   onOpenConversations,
   onOpenMemory,
+  onOpenSoul,
   memoryLoaded = true,
 }: Props) {
   return (
@@ -96,6 +98,13 @@ export function ChatLayout({
             title="Memory"
           >
             <BrainIcon className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={onOpenSoul}
+            className="flex h-7 w-7 items-center justify-center text-muted-foreground/60 hover:text-foreground/80 transition-colors duration-150"
+            title="SOUL"
+          >
+            <HeartIcon className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={onOpenSettings}

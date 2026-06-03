@@ -4,6 +4,7 @@ import type { ChatMessage, ExtensionMessage } from '../core/types'
 import { getScheduledTasks, updateScheduledTask, syncAlarms } from '../lib/scheduler'
 import { reviewAndExtractMemory } from '../core/agent/memory-review'
 import { loadMemory } from '../lib/memory'
+import { loadSoul } from '../lib/soul'
 
 let agent: AgentLoop | null = null
 let activeConversationId: string | null = null
@@ -82,8 +83,9 @@ function setupMessageListener() {
 
 async function handleChatMessage(text: string, history: ChatMessage[]) {
   try {
-    // Load memory into frozen snapshot for system prompt injection
+    // Load memory and soul into frozen snapshot for system prompt injection
     await loadMemory()
+    await loadSoul()
     const agentLoop = await getAgent()
 
     // Start glow overlay on all tabs
