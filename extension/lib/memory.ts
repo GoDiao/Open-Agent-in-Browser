@@ -51,6 +51,20 @@ const CHAR_LIMITS: Record<MemoryTarget, number> = {
 
 const STORAGE_KEY = 'memoryStore'
 
+// ── Lazy load guard — ensures module state is populated from storage ──
+
+let _loaded = false
+
+async function ensureLoaded(): Promise<void> {
+  if (_loaded) return
+  const result = await chrome.storage.local.get(STORAGE_KEY)
+  const data = result[STORAGE_KEY] as MemoryStorageData | undefined
+  _memoryEntries = data?.memoryEntries ? [...new Set(data.memoryEntries)] : []
+  _userEntries = data?.userEntries ? [...new Set(data.userEntries)] : []
+  _userFields = { ...EMPTY_USER_FIELDS, ...(data?.userFields || {}) }
+  _loaded = true
+}
+
 // ── Frozen snapshot for system prompt injection ──
 
 let _frozenSnapshot: Record<MemoryTarget, string> = { memory: '', user: '' }
@@ -184,6 +198,7 @@ async function persist(): Promise<void> {
  * Set a structured user profile field.
  */
 export async function setUserField(key: string, value: string): Promise<MemoryResult> {
+  await ensureLoaded()
   if (!key.trim()) return { success: false, error: 'Field key cannot be empty.' }
 
   _userFields = { ..._userFields, [key.trim()]: value.trim() }
@@ -202,6 +217,7 @@ export function getUserFields(): UserFields {
  * Add a new entry to the specified store.
  */
 export async function addEntry(target: MemoryTarget, content: string): Promise<MemoryResult> {
+  await ensureLoaded()
   content = content.trim()
   if (!content) return { success: false, error: 'Content cannot be empty.' }
 
@@ -234,6 +250,7 @@ export async function addEntry(target: MemoryTarget, content: string): Promise<M
  * Replace an entry containing oldText substring with newContent.
  */
 export async function replaceEntry(target: MemoryTarget, oldText: string, newContent: string): Promise<MemoryResult> {
+  await ensureLoaded()
   oldText = oldText.trim()
   newContent = newContent.trim()
   if (!oldText) return { success: false, error: 'oldText cannot be empty.' }
@@ -283,6 +300,7 @@ export async function replaceEntry(target: MemoryTarget, oldText: string, newCon
  * Remove an entry containing oldText substring.
  */
 export async function removeEntry(target: MemoryTarget, oldText: string): Promise<MemoryResult> {
+  await ensureLoaded()
   oldText = oldText.trim()
   if (!oldText) return { success: false, error: 'oldText cannot be empty.' }
 
@@ -320,6 +338,24 @@ export function getEntries(target: MemoryTarget): string[] {
 }
 
 /**
+ * Read memory directly from chrome.storage.local (works from any context).
+ * Use this in tool handlers that run in background script.
+ */
+export async function readMemoryFromStorage(): Promise<{
+  memoryEntries: string[]
+  userEntries: string[]
+  userFields: UserFields
+}> {
+  const result = await chrome.storage.local.get(STORAGE_KEY)
+  const data = result[STORAGE_KEY] as MemoryStorageData | undefined
+  return {
+    memoryEntries: data?.memoryEntries || [],
+    userEntries: data?.userEntries || [],
+    userFields: { ...EMPTY_USER_FIELDS, ...(data?.userFields || {}) },
+  }
+}
+
+/**
  * Get usage info for a target.
  */
 export function getUsage(target: MemoryTarget): { current: number; limit: number; pct: number } {
@@ -333,6 +369,7 @@ export function getUsage(target: MemoryTarget): { current: number; limit: number
  * Returns false if the entries exceed the character limit.
  */
 export async function setAllEntries(target: MemoryTarget, entries: string[]): Promise<boolean> {
+  await ensureLoaded()
   const filtered = entries.filter(e => e.trim())
   const limit = CHAR_LIMITS[target]
   const total = filtered.join(ENTRY_DELIMITER).length
@@ -348,6 +385,7 @@ export async function setAllEntries(target: MemoryTarget, entries: string[]): Pr
  * Overwrite all user fields (used by UI).
  */
 export async function setAllUserFields(fields: UserFields): Promise<void> {
+  await ensureLoaded()
   _userFields = { ...fields }
   await persist()
 }
@@ -360,6 +398,7 @@ export async function compactEntries(
   target: MemoryTarget,
   config: { endpoint: string; apiKey: string; model: string },
 ): Promise<string[] | null> {
+  await ensureLoaded()
   const entries = entriesFor(target)
   if (entries.length < 2) return null
 

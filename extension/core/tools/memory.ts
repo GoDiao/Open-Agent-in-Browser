@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { defineTool } from './framework'
-import { addEntry, replaceEntry, removeEntry, setUserField, compactEntries, getEntries, getUserFields } from '../../lib/memory'
+import { addEntry, replaceEntry, removeEntry, setUserField, compactEntries, readMemoryFromStorage } from '../../lib/memory'
 
 export const update_memory = defineTool({
   name: 'update_memory',
@@ -48,12 +48,12 @@ ACTIONS:
     const { action, target, content, old_text, field, value } = args
 
     if (action === 'read') {
-      const entries = target ? getEntries(target) : []
-      const userFields = getUserFields()
+      const data = await readMemoryFromStorage()
+      const entries = target === 'user' ? data.userEntries : target === 'memory' ? data.memoryEntries : []
       response.text(JSON.stringify({
         entries,
-        userFields,
-        usage: target ? `${entries.length} entries` : 'no target specified',
+        userFields: data.userFields,
+        memoryEntries: data.memoryEntries,
       }))
       return
     }
