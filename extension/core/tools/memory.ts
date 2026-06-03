@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { defineTool } from './framework'
-import { addEntry, replaceEntry, removeEntry, setUserField, compactEntries } from '../../lib/memory'
+import { addEntry, replaceEntry, removeEntry, setUserField, compactEntries, getEntries, getUserFields } from '../../lib/memory'
 
 export const update_memory = defineTool({
   name: 'update_memory',
@@ -30,13 +30,14 @@ STRUCTURED USER FIELDS (use set_user_field for these):
 - Use add(user, ...) for free-form preferences that don't fit a field.
 
 ACTIONS:
+- read: read current memory state (requires target). Returns entries and user fields.
 - add: append a new entry (requires target + content)
 - replace: update existing entry by substring match (requires target + old_text + content)
 - remove: delete entry by substring match (requires target + old_text)
 - set_user_field: set a structured profile field (requires field + value)
 - compact: consolidate entries via LLM (requires target). Merges duplicates, shortens verbose entries, removes stale info. Use when approaching the character limit.`,
   input: z.object({
-    action: z.enum(['add', 'replace', 'remove', 'set_user_field', 'compact']).describe('The action to perform.'),
+    action: z.enum(['read', 'add', 'replace', 'remove', 'set_user_field', 'compact']).describe('The action to perform.'),
     target: z.enum(['memory', 'user']).optional().describe('Which store: "memory" for personal notes, "user" for user profile. Required for add/replace/remove.'),
     content: z.string().optional().describe('The entry content. Required for add and replace.'),
     old_text: z.string().optional().describe('Short unique substring identifying the entry to replace or remove.'),
@@ -45,6 +46,17 @@ ACTIONS:
   }),
   handler: async (args, ctx, response) => {
     const { action, target, content, old_text, field, value } = args
+
+    if (action === 'read') {
+      const entries = target ? getEntries(target) : []
+      const userFields = getUserFields()
+      response.text(JSON.stringify({
+        entries,
+        userFields,
+        usage: target ? `${entries.length} entries` : 'no target specified',
+      }))
+      return
+    }
 
     if (action === 'set_user_field') {
       if (!field) {
