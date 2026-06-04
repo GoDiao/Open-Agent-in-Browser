@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [master, dev]
+  pull_request:
+    branches: [master, dev]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'bun'
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Type check
+        run: bun run compile
+        working-directory: ./extension
+
+      - name: Run tests
+        run: bun run test
+        working-directory: ./extension
+
+      - name: Build extension
+        run: bun run build
+        working-directory: ./extension

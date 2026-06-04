@@ -9,6 +9,7 @@ export interface DeviceMetrics {
   screenHeight?: number
   positionX?: number
   positionY?: number
+  [key: string]: unknown
 }
 
 export async function setDeviceMetricsOverride(

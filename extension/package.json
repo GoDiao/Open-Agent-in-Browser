@@ -12,7 +12,9 @@
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
     "compile": "tsc --noEmit",
-    "postinstall": "wxt prepare"
+    "postinstall": "wxt prepare",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@radix-ui/react-collapsible": "^1.1.12",
@@ -31,9 +33,12 @@
     "@types/chrome": "^0.1.42",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vitest/ui": "^4.1.8",
     "@wxt-dev/module-react": "^1.1.5",
+    "happy-dom": "^20.9.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.9.3",
+    "vitest": "^4.1.8",
     "wxt": "^0.20.26"
   }
 }

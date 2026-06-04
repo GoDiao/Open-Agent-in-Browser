@@ -20,10 +20,10 @@ export default defineContentScript({
     // Get our own tab ID from background (content scripts don't have chrome.tabs.query)
     try {
       chrome.runtime.sendMessage({ type: 'get-tab-id' }, (response) => {
-        if (response?.tabId) {
+        if (response?.tabId && typeof response.tabId === 'number') {
           tabId = response.tabId
           // Initialize network tracking after getting tab ID
-          initNetworkTracking(tabId)
+          initNetworkTracking(tabId!)
         }
       })
     } catch {
@@ -38,13 +38,16 @@ export default defineContentScript({
 
         try {
           const entries = performance.getEntriesByType('resource')
-          const requests = entries.slice(-MAX_NETWORK_REQUESTS).map(entry => ({
-            name: entry.name,
-            initiatorType: entry.initiatorType,
-            transferSize: entry.transferSize,
-            duration: entry.duration,
-            startTime: entry.startTime,
-          }))
+          const requests = entries.slice(-MAX_NETWORK_REQUESTS).map(entry => {
+            const timing = entry as PerformanceResourceTiming
+            return {
+              name: entry.name,
+              initiatorType: timing.initiatorType || 'other',
+              transferSize: timing.transferSize || 0,
+              duration: entry.duration,
+              startTime: entry.startTime,
+            }
+          })
 
           // Store to chrome.storage.local
           chrome.storage.local.set({

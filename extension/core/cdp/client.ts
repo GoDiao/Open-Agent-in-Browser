@@ -26,7 +26,7 @@ export class ChromeDebuggerClient implements CDPClient {
   async sendCommand<T = unknown>(
     tabId: number,
     method: string,
-    params?: Record<string, unknown>,
+    params?: Record<string, unknown> | { [key: string]: unknown },
   ): Promise<T> {
     if (!this.attached.has(tabId)) {
       await this.attach(tabId)
@@ -34,7 +34,7 @@ export class ChromeDebuggerClient implements CDPClient {
     const result = await chrome.debugger.sendCommand(
       { tabId },
       method,
-      params,
+      params as Record<string, unknown> | undefined,
     )
     return result as T
   }

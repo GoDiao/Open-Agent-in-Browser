@@ -126,7 +126,7 @@ export const set_extra_headers = defineTool({
   name: 'set_extra_headers',
   description: 'Set extra HTTP headers for all requests',
   input: z.object({
-    headers: z.record(z.string()).describe('Headers to add (e.g., {"X-Custom": "value"})'),
+    headers: z.record(z.string(), z.string()).describe('Headers to add (e.g., {"X-Custom": "value"})'),
   }),
   handler: async (args, ctx, response) => {
     await NetworkDomain.setExtraHTTPHeaders(ctx.cdp, ctx.tabId, args.headers)
