@@ -1,6 +1,8 @@
 import { getSelectedTextMap, setSelectedText } from '../lib/storage'
 
 const MAX_SELECTED_TEXT_LENGTH = 5000
+const MAX_NETWORK_REQUESTS = 100
+const NETWORK_STORAGE_KEY = 'agent_network_requests'
 
 export default defineContentScript({
   matches: ['*://*/*'],
@@ -20,12 +22,60 @@ export default defineContentScript({
       chrome.runtime.sendMessage({ type: 'get-tab-id' }, (response) => {
         if (response?.tabId) {
           tabId = response.tabId
+          // Initialize network tracking after getting tab ID
+          initNetworkTracking(tabId)
         }
       })
     } catch {
       // Extension context invalidated — silently ignore
     }
 
+    // ── Network Request Tracking ──
+    function initNetworkTracking(tabId: number) {
+      // Use Performance API to capture network requests
+      const captureRequests = () => {
+        if (!isContextValid()) return
+
+        try {
+          const entries = performance.getEntriesByType('resource')
+          const requests = entries.slice(-MAX_NETWORK_REQUESTS).map(entry => ({
+            name: entry.name,
+            initiatorType: entry.initiatorType,
+            transferSize: entry.transferSize,
+            duration: entry.duration,
+            startTime: entry.startTime,
+          }))
+
+          // Store to chrome.storage.local
+          chrome.storage.local.set({
+            [NETWORK_STORAGE_KEY]: {
+              tabId,
+              requests,
+              timestamp: Date.now(),
+            }
+          }).catch(() => {})
+        } catch {
+          // Ignore errors
+        }
+      }
+
+      // Capture on page load
+      if (document.readyState === 'complete') {
+        captureRequests()
+      } else {
+        window.addEventListener('load', captureRequests)
+      }
+
+      // Capture periodically for dynamic requests
+      const intervalId = setInterval(captureRequests, 2000)
+
+      // Cleanup on unload
+      window.addEventListener('unload', () => {
+        clearInterval(intervalId)
+      })
+    }
+
+    // ── Text Selection Tracking ──
     document.addEventListener('mouseup', async () => {
       if (tabId == null || !isContextValid()) return
 

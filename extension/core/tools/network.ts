@@ -3,29 +3,54 @@ import * as NetworkDomain from '../cdp/domains/network'
 import * as Runtime from '../cdp/domains/runtime'
 import { defineTool } from './framework'
 
+const NETWORK_STORAGE_KEY = 'agent_network_requests'
+
 export const get_network_requests = defineTool({
   name: 'get_network_requests',
-  description: 'Get recent network requests from the page (requires page reload after enabling)',
+  description: 'Get recent network requests from the page. Captured via Performance API.',
   input: z.object({
     count: z.number().default(30).describe('Number of recent requests'),
     filter: z.string().optional().describe('Filter by URL pattern'),
   }),
   handler: async (args, ctx, response) => {
-    const result = await Runtime.evaluate(
-      ctx.cdp,
-      ctx.tabId,
-      `(function() {
-        const reqs = window.__agent_network_requests || [];
-        let filtered = reqs;
-        ${args.filter ? `filtered = reqs.filter(r => r.url.includes('${args.filter.replace(/'/g, "\\'")}'));` : ''}
-        return filtered.slice(-${args.count}).map(r => r.method + ' ' + r.status + ' ' + r.url).join('\\n');
-      })()`,
-    )
-    if (result.error) {
-      response.text('No network requests captured.')
+    // Read from chrome.storage.local (set by content script)
+    const result = await chrome.storage.local.get(NETWORK_STORAGE_KEY)
+    const data = result[NETWORK_STORAGE_KEY] as {
+      tabId: number
+      requests: Array<{ name: string; initiatorType: string; transferSize: number; duration: number; startTime: number }>
+      timestamp: number
+    } | undefined
+
+    if (!data || data.tabId !== ctx.tabId) {
+      response.text('No network requests captured yet. Navigate to a page and wait a few seconds.')
       return
     }
-    response.text(result.result || 'No network requests.')
+
+    let requests = data.requests || []
+
+    // Apply filter if provided
+    if (args.filter) {
+      const filter = args.filter.toLowerCase()
+      requests = requests.filter(r => r.name.toLowerCase().includes(filter))
+    }
+
+    // Apply count limit
+    requests = requests.slice(-args.count)
+
+    if (requests.length === 0) {
+      response.text('No network requests found.')
+      return
+    }
+
+    // Format output
+    const formatted = requests.map(r => {
+      const size = r.transferSize > 1024
+        ? `${(r.transferSize / 1024).toFixed(1)}KB`
+        : `${r.transferSize}B`
+      return `${r.name.slice(0, 80)} [${r.initiatorType}, ${size}, ${r.duration.toFixed(0)}ms]`
+    }).join('\n')
+
+    response.text(`Recent ${requests.length} requests:\n\n${formatted}`)
   },
 })
 
