@@ -456,7 +456,7 @@ export function NewTabPage() {
               </p>
               <button
                 onClick={(e) => handleDeleteLink(e, link.id)}
-                className="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center text-muted-foreground/0 group-hover:text-muted-foreground/50 hover:text-destructive/70 transition-all"
+                className="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center text-muted-foreground/0 group-hover:text-muted-foreground/50 hover:text-destructive/70 transition-all group-focus-within:text-muted-foreground/50 group-active:text-destructive/70 md:group-hover:text-muted-foreground/50 sm:pointer-events-auto pointer-events-none"
               >
                 <TrashIcon className="h-2.5 w-2.5" />
               </button>

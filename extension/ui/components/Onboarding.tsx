@@ -308,7 +308,7 @@ export function Onboarding({ onComplete }: Props) {
             disabled={step === 0}
             className={cn(
               'text-xs text-muted-foreground/60 hover:text-foreground transition-colors',
-              step === 0 && 'opacity-0 pointer-events-none',
+              step === 0 && 'invisible',
             )}
           >
             Back

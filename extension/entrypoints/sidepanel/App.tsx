@@ -8,6 +8,7 @@ import { AgentProfiles } from '../../ui/components/AgentProfiles'
 import { ConversationList } from '../../ui/components/ConversationList'
 import { MemoryPanel } from '../../ui/components/MemoryPanel'
 import { SoulPanel } from '../../ui/components/SoulPanel'
+import { ToastProvider } from '../../ui/components/Toast'
 import { useChat } from '../../ui/hooks/useChat'
 import { getTheme, applyTheme, getConfig } from '../../lib/storage'
 import { loadMemory } from '../../lib/memory'
@@ -76,62 +77,66 @@ export function App() {
   }, [handleBackgroundMessage, sendMessage])
 
   if (view === 'onboarding') {
-    return <Onboarding onComplete={() => setView('chat')} />
+    return <ToastProvider><Onboarding onComplete={() => setView('chat')} /></ToastProvider>
   }
 
   if (view === 'settings') {
-    return <Settings onClose={() => setView('chat')} />
+    return <ToastProvider><Settings onClose={() => setView('chat')} /></ToastProvider>
   }
 
   if (view === 'history') {
-    return <ExecutionHistory onClose={() => setView('chat')} />
+    return <ToastProvider><ExecutionHistory onClose={() => setView('chat')} /></ToastProvider>
   }
 
   if (view === 'scheduler') {
-    return <Scheduler onClose={() => setView('chat')} />
+    return <ToastProvider><Scheduler onClose={() => setView('chat')} /></ToastProvider>
   }
 
   if (view === 'profiles') {
-    return <AgentProfiles onClose={() => setView('chat')} />
+    return <ToastProvider><AgentProfiles onClose={() => setView('chat')} /></ToastProvider>
   }
 
   if (view === 'memory') {
-    return <MemoryPanel onClose={() => setView('chat')} />
+    return <ToastProvider><MemoryPanel onClose={() => setView('chat')} /></ToastProvider>
   }
 
   if (view === 'soul') {
-    return <SoulPanel onClose={() => setView('chat')} />
+    return <ToastProvider><SoulPanel onClose={() => setView('chat')} /></ToastProvider>
   }
 
   if (view === 'conversations') {
     return (
-      <ConversationList
-        onClose={() => setView('chat')}
-        onSelect={(id) => {
-          loadConversation(id)
-          setView('chat')
-        }}
-      />
+      <ToastProvider>
+        <ConversationList
+          onClose={() => setView('chat')}
+          onSelect={(id) => {
+            loadConversation(id)
+            setView('chat')
+          }}
+        />
+      </ToastProvider>
     )
   }
 
   return (
-    <ChatLayout
-      messages={messages}
-      isStreaming={isStreaming}
-      currentToolCall={currentToolCall}
-      error={error}
-      onSend={sendMessage}
-      onStop={stop}
-      onClear={clear}
-      onOpenSettings={() => setView('settings')}
-      onOpenHistory={() => setView('history')}
-      onOpenScheduler={() => setView('scheduler')}
-      onOpenProfiles={() => setView('profiles')}
-      onOpenConversations={() => setView('conversations')}
-      onOpenMemory={() => setView('memory')}
-      onOpenSoul={() => setView('soul')}
-      memoryLoaded={memoryLoaded}
-    />
+    <ToastProvider>
+      <ChatLayout
+        messages={messages}
+        isStreaming={isStreaming}
+        currentToolCall={currentToolCall}
+        error={error}
+        onSend={sendMessage}
+        onStop={stop}
+        onClear={clear}
+        onOpenSettings={() => setView('settings')}
+        onOpenHistory={() => setView('history')}
+        onOpenScheduler={() => setView('scheduler')}
+        onOpenProfiles={() => setView('profiles')}
+        onOpenConversations={() => setView('conversations')}
+        onOpenMemory={() => setView('memory')}
+        onOpenSoul={() => setView('soul')}
+        memoryLoaded={memoryLoaded}
+      />
+    </ToastProvider>
   )
 }

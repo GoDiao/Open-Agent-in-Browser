@@ -65,6 +65,14 @@ export function ChatMessage({ message, index }: Props) {
               </MessageToolResult>
             )}
 
+            {/* 工具执行错误 */}
+            {message.toolError && (
+              <div className="flex items-start gap-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-600 text-xs">
+                <span className="font-medium">Error:</span>
+                <span>{message.toolError}</span>
+              </div>
+            )}
+
             {/* 文本内容 */}
             {message.content ? (
               <Shimmer active={message.isStreaming}>

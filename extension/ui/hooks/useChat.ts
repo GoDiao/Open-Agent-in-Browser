@@ -145,10 +145,14 @@ export function useChat() {
         setCurrentToolCall(null)
         setMessages((prev) => {
           const last = prev[prev.length - 1]
+          const isError = msg.isError as boolean
+          const errorText = isError
+            ? (msg.result as { content: { text: string }[] }).content?.[0]?.text || 'Tool execution failed'
+            : undefined
           if (last?.role === 'assistant') {
             return [
               ...prev.slice(0, -1),
-              { ...last, toolResult: JSON.stringify(msg.result) },
+              { ...last, toolResult: JSON.stringify(msg.result), toolError: errorText },
             ]
           }
           return prev

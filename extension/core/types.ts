@@ -84,6 +84,7 @@ export interface ChatMessage {
   tool_call_id?: string
   tool_calls?: ToolCall[]
   toolResult?: string
+  toolError?: string
   reasoning?: string
   isStreaming?: boolean
 }

@@ -104,7 +104,7 @@ async function handleChatMessage(text: string, history: ChatMessage[]) {
         sendToUI({ type: 'chat:tool_call', name, args })
       },
       onToolResult: (name, result) => {
-        sendToUI({ type: 'chat:tool_result', name, result })
+        sendToUI({ type: 'chat:tool_result', name, result, isError: result.isError })
       },
       onDone: () => {
         sendToUI({ type: 'chat:done' })
