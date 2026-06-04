@@ -68,9 +68,25 @@ class OpenAICompatibleProvider implements LLMProvider {
 
       for (const line of lines) {
         const trimmed = line.trim()
-        if (!trimmed || !trimmed.startsWith('data: ')) continue
+
+        // Skip empty lines
+        if (!trimmed) continue
+
+        // Handle event: lines (SSE spec)
+        if (trimmed.startsWith('event:')) {
+          continue
+        }
+
+        // Only process data: lines
+        if (!trimmed.startsWith('data: ')) continue
+
         const data = trimmed.slice(6)
+
+        // Handle [DONE] sentinel
         if (data === '[DONE]') continue
+
+        // Skip non-JSON lines
+        if (!data.startsWith('{')) continue
 
         try {
           const chunk: StreamChunk = JSON.parse(data)
