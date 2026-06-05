@@ -1,0 +1,607 @@
+/* ============================================
+   Iris Landing Page - Apple Style Design System
+   ============================================ */
+
+/* CSS Custom Properties - Design Tokens */
+:root {
+    /* Brand & Accent */
+    --primary: #0066cc;
+    --primary-focus: #0071e3;
+    --primary-on-dark: #2997ff;
+
+    /* Surface - Light */
+    --canvas: #ffffff;
+    --canvas-parchment: #f5f5f7;
+    --surface-pearl: #fafafc;
+
+    /* Surface - Dark */
+    --surface-tile-1: #272729;
+    --surface-tile-2: #2a2a2c;
+    --surface-tile-3: #252527;
+    --surface-black: #000000;
+
+    /* Text */
+    --ink: #1d1d1f;
+    --body-on-dark: #ffffff;
+    --body-muted: #cccccc;
+    --ink-muted-80: #333333;
+    --ink-muted-48: #7a7a7a;
+
+    /* Borders */
+    --divider-soft: #f0f0f0;
+    --hairline: #e0e0e0;
+
+    /* Typography */
+    --font-display: 'SF Pro Display', 'Inter', system-ui, -apple-system, sans-serif;
+    --font-body: 'SF Pro Text', 'Inter', system-ui, -apple-system, sans-serif;
+
+    /* Spacing */
+    --spacing-section: 80px;
+    --spacing-xxl: 48px;
+    --spacing-xl: 32px;
+    --spacing-lg: 24px;
+    --spacing-md: 17px;
+    --spacing-sm: 12px;
+    --spacing-xs: 8px;
+    --spacing-xxs: 4px;
+
+    /* Shadows */
+    --shadow-product: rgba(0, 0, 0, 0.22) 3px 5px 30px 0;
+}
+
+/* Reset & Base */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.47;
+    letter-spacing: -0.374px;
+    color: var(--ink);
+    background: var(--canvas);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   Global Navigation
+   ============================================ */
+.global-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 44px;
+    background: var(--surface-black);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    z-index: 1000;
+}
+
+.nav-logo {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--body-on-dark);
+    text-decoration: none;
+    letter-spacing: -0.2px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 32px;
+}
+
+.nav-links a {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--body-muted);
+    text-decoration: none;
+    letter-spacing: -0.12px;
+    transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+    color: var(--body-on-dark);
+}
+
+.nav-github {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--body-muted);
+    text-decoration: none;
+    letter-spacing: -0.12px;
+}
+
+.nav-github:hover {
+    color: var(--body-on-dark);
+}
+
+/* ============================================
+   Typography
+   ============================================ */
+.hero-display {
+    font-family: var(--font-display);
+    font-size: 56px;
+    font-weight: 600;
+    line-height: 1.07;
+    letter-spacing: -0.28px;
+    color: var(--ink);
+    margin-bottom: var(--spacing-md);
+}
+
+.display-lg {
+    font-family: var(--font-display);
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: 0;
+    color: var(--body-on-dark);
+    margin-bottom: var(--spacing-md);
+}
+
+.lead {
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.14;
+    letter-spacing: 0.196px;
+    color: var(--ink);
+    margin-bottom: var(--spacing-md);
+}
+
+.tagline {
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1.19;
+    letter-spacing: 0.231px;
+    color: var(--ink-muted-80);
+    margin-bottom: var(--spacing-lg);
+}
+
+.body-copy {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.47;
+    letter-spacing: -0.374px;
+    color: var(--body-muted);
+    max-width: 480px;
+    margin-bottom: var(--spacing-lg);
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+.button-primary {
+    display: inline-block;
+    background: var(--primary);
+    color: var(--body-on-dark);
+    font-size: 17px;
+    font-weight: 400;
+    text-decoration: none;
+    padding: 11px 22px;
+    border-radius: 9999px;
+    transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.button-primary:hover {
+    background: var(--primary-focus);
+}
+
+.button-primary:active {
+    transform: scale(0.95);
+}
+
+.button-primary:focus {
+    outline: 2px solid var(--primary-focus);
+    outline-offset: 2px;
+}
+
+.button-primary.large {
+    font-size: 18px;
+    font-weight: 300;
+    padding: 14px 28px;
+}
+
+.button-secondary-pill {
+    display: inline-block;
+    background: transparent;
+    color: var(--primary);
+    font-size: 17px;
+    font-weight: 400;
+    text-decoration: none;
+    padding: 11px 22px;
+    border: 1px solid var(--primary);
+    border-radius: 9999px;
+    transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.button-secondary-pill:hover {
+    background: rgba(0, 102, 204, 0.1);
+}
+
+.button-secondary-pill:active {
+    transform: scale(0.95);
+}
+
+/* ============================================
+   Product Tiles
+   ============================================ */
+.product-tile-light,
+.product-tile-parchment,
+.product-tile-dark,
+.product-tile-dark-2 {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-section) 48px;
+    text-align: center;
+}
+
+.product-tile-light {
+    background: var(--canvas);
+}
+
+.product-tile-parchment {
+    background: var(--canvas-parchment);
+}
+
+.product-tile-dark {
+    background: var(--surface-tile-1);
+}
+
+.product-tile-dark-2 {
+    background: var(--surface-tile-2);
+}
+
+.hero-tile {
+    padding-top: calc(44px + var(--spacing-section));
+}
+
+.tile-content {
+    max-width: 680px;
+    margin-bottom: var(--spacing-xxl);
+}
+
+.tile-content .lead {
+    color: var(--body-on-dark);
+}
+
+.tile-content .tagline {
+    color: var(--body-muted);
+}
+
+.tile-content .body-copy {
+    color: var(--body-muted);
+}
+
+.cta-group {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cta-group.centered {
+    flex-direction: column;
+    align-items: center;
+}
+
+.cta-tile .tile-content {
+    max-width: 800px;
+}
+
+.caption {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.43;
+    letter-spacing: -0.224px;
+    color: var(--ink-muted-48);
+    margin-top: var(--spacing-md);
+}
+
+/* ============================================
+   Hero Visual
+   ============================================ */
+.hero-visual {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-xl) 0;
+}
+
+.iris-icon {
+    width: 200px;
+    height: 200px;
+    color: var(--primary);
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* ============================================
+   Memory Visual
+   ============================================ */
+.memory-visual,
+.automation-visual,
+.soul-visual,
+.providers-visual {
+    display: flex;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: var(--spacing-xl) 0;
+}
+
+.memory-card,
+.soul-card {
+    background: var(--surface-tile-2);
+    border-radius: 18px;
+    padding: 24px 32px;
+    text-align: center;
+    min-width: 140px;
+}
+
+.card-icon {
+    font-size: 32px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.card-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--body-on-dark);
+}
+
+.soul-label {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--body-muted);
+    margin-bottom: var(--spacing-xxs);
+}
+
+.soul-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--body-on-dark);
+}
+
+/* ============================================
+   Automation Visual
+   ============================================ */
+.tool-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-sm);
+}
+
+.tool-item {
+    background: var(--canvas-parchment);
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 400;
+    padding: 12px 20px;
+    border-radius: 8px;
+    min-width: 100px;
+}
+
+/* ============================================
+   Providers Visual
+   ============================================ */
+.provider-logo {
+    background: var(--canvas);
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 16px 32px;
+    border-radius: 8px;
+    border: 1px solid var(--hairline);
+}
+
+/* ============================================
+   Footer
+   ============================================ */
+.footer {
+    background: var(--canvas-parchment);
+    padding: 64px 48px 32px;
+}
+
+.footer-content {
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.footer-links {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.footer-col h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: var(--spacing-sm);
+}
+
+.footer-col a {
+    display: block;
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 2.41;
+    color: var(--ink-muted-80);
+    text-decoration: none;
+}
+
+.footer-col a:hover {
+    text-decoration: underline;
+}
+
+.footer-legal {
+    border-top: 1px solid var(--hairline);
+    padding-top: var(--spacing-md);
+}
+
+.footer-legal p {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.12px;
+    color: var(--ink-muted-48);
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+/* Tablet Landscape */
+@media (max-width: 1068px) {
+    .hero-display {
+        font-size: 48px;
+    }
+
+    .display-lg {
+        font-size: 34px;
+    }
+
+    .lead {
+        font-size: 24px;
+    }
+
+    .tool-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Tablet Portrait */
+@media (max-width: 834px) {
+    .global-nav {
+        padding: 0 24px;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .product-tile-light,
+    .product-tile-parchment,
+    .product-tile-dark,
+    .product-tile-dark-2 {
+        padding: 48px 24px;
+        min-height: auto;
+        padding-top: calc(44px + 48px);
+        padding-bottom: 48px;
+    }
+
+    .hero-display {
+        font-size: 40px;
+    }
+
+    .display-lg {
+        font-size: 28px;
+    }
+
+    .lead {
+        font-size: 21px;
+    }
+
+    .tagline {
+        font-size: 17px;
+    }
+
+    .body-copy {
+        font-size: 15px;
+    }
+
+    .footer-links {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .tool-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+    .hero-display {
+        font-size: 34px;
+    }
+
+    .display-lg {
+        font-size: 24px;
+    }
+
+    .cta-group {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .button-primary,
+    .button-secondary-pill {
+        width: 100%;
+        max-width: 280px;
+        text-align: center;
+    }
+
+    .footer {
+        padding: 48px 20px 24px;
+    }
+
+    .footer-links {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .memory-visual,
+    .providers-visual {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .memory-card,
+    .provider-logo {
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .tool-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 420px) {
+    .hero-display {
+        font-size: 28px;
+    }
+
+    .display-lg {
+        font-size: 21px;
+    }
+
+    .lead {
+        font-size: 17px;
+    }
+
+    .iris-icon {
+        width: 140px;
+        height: 140px;
+    }
+}

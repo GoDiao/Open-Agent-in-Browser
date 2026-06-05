@@ -4,7 +4,7 @@ on:
   push:
     branches: [master]
     paths:
-      - 'docs/landing/**'
+      - 'docs/landing-page/**'
 
 permissions:
   contents: read
@@ -31,7 +31,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'docs/landing'
+          path: 'docs/landing-page'
 
       - name: Deploy to GitHub Pages
         id: deployment
