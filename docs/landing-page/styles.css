@@ -173,7 +173,7 @@ body {
     font-weight: 400;
     line-height: 1.47;
     letter-spacing: -0.374px;
-    color: var(--body-muted);
+    color: var(--ink-muted-80);
     max-width: 480px;
     margin-bottom: var(--spacing-lg);
 }
@@ -296,7 +296,7 @@ body {
 .product-tile-dark .tile-content .body-copy,
 .product-tile-dark-2 .tile-content .tagline,
 .product-tile-dark-2 .tile-content .body-copy {
-    color: var(--body-muted);
+    color: #a0a0a5;
 }
 
 .cta-group {
@@ -404,13 +404,14 @@ body {
 }
 
 .tool-item {
-    background: var(--canvas-parchment);
+    background: var(--surface-pearl);
     color: var(--ink);
     font-size: 14px;
-    font-weight: 400;
+    font-weight: 500;
     padding: 12px 20px;
     border-radius: 8px;
     min-width: 100px;
+    border: 1px solid var(--divider-soft);
 }
 
 /* ============================================
@@ -1033,7 +1034,7 @@ body {
     line-height: 1.6;
     color: var(--ink-muted-80);
     padding: 8px 0;
-    border-bottom: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--divider-soft);
 }
 
 .feature-list li:last-child {
@@ -1156,7 +1157,7 @@ body {
     border-radius: 14px;
     padding: 24px;
     text-align: left;
-    border: 1px solid var(--hairline);
+    border: 1px solid var(--divider-soft);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -1189,10 +1190,11 @@ body {
 }
 
 .provider-item {
-    background: var(--canvas-parchment);
+    background: var(--surface-pearl);
     border-radius: 12px;
     padding: 20px;
     text-align: center;
+    border: 1px solid var(--divider-soft);
 }
 
 .provider-item .p-name {
