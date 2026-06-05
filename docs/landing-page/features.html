@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features — Iris</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <!-- Global Navigation -->
+    <nav class="global-nav">
+        <a href="index.html" class="nav-logo">Iris</a>
+        <div class="nav-links">
+            <a href="features.html" class="active">Features</a>
+            <a href="https://github.com/GoDiao/Open-Agent-in-Browser" target="_blank">Docs</a>
+            <a href="https://github.com/GoDiao/Open-Agent-in-Browser" target="_blank">Pricing</a>
+        </div>
+        <a href="https://github.com/GoDiao/Open-Agent-in-Browser" class="nav-github" target="_blank">GitHub</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="product-tile-light hero-tile features-hero">
+        <div class="tile-content">
+            <h1 class="hero-display">Built for power users</h1>
+            <p class="lead">Every feature designed to make you more productive</p>
+            <p class="tagline">From simple automation to complex workflows, Iris has you covered.</p>
+        </div>
+        <div class="hero-visual features-visual">
+            <div class="floating-cards">
+                <div class="float-card card-1">
+                    <span class="card-emoji">🧠</span>
+                    <span>Memory</span>
+                </div>
+                <div class="float-card card-2">
+                    <span class="card-emoji">⚡</span>
+                    <span>Automation</span>
+                </div>
+                <div class="float-card card-3">
+                    <span class="card-emoji">🎯</span>
+                    <span>Precision</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature 1: Persistent Memory -->
+    <section class="product-tile-dark" id="memory">
+        <div class="tile-content">
+            <h2 class="display-lg">Remembers everything</h2>
+            <p class="lead">Your personal AI that never forgets</p>
+            <p class="body-copy">Iris builds a persistent memory across sessions. It remembers your preferences, your work context, and everything you've taught it — forever.</p>
+            <ul class="feature-list">
+                <li>User profile with structured fields</li>
+                <li>Free-form notes and context</li>
+                <li>Automatic memory extraction</li>
+                <li>Cross-session persistence</li>
+            </ul>
+            <div class="cta-group">
+                <a href="https://github.com/GoDiao/Open-Agent-in-Browser" class="button-primary">Learn more</a>
+            </div>
+        </div>
+        <div class="tile-visual memory-demo">
+            <div class="demo-card">
+                <div class="demo-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <div class="demo-content">
+                    <div class="memory-entry">
+                        <span class="entry-label">Name</span>
+                        <span class="entry-value">Alex</span>
+                    </div>
+                    <div class="memory-entry">
+                        <span class="entry-label">Role</span>
+                        <span class="entry-value">Software Engineer</span>
+                    </div>
+                    <div class="memory-entry">
+                        <span class="entry-label">Timezone</span>
+                        <span class="entry-value">UTC+8</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature 2: SOUL - AI Personality -->
+    <section class="product-tile-parchment" id="soul">
+        <div class="tile-content">
+            <h2 class="display-lg">Your AI, your way</h2>
+            <p class="lead">Customize Iris's personality and behavior</p>
+            <p class="body-copy">Configure how Iris responds, what it avoids, and its communication style. Make it truly yours.</p>
+            <ul class="feature-list">
+                <li>Personality description</li>
+                <li>Communication style</li>
+                <li>Boundaries & limits</li>
+                <li>Task preferences</li>
+            </ul>
+            <div class="cta-group">
+                <a href="https://github.com/GoDiao/Open-Agent-in-Browser" class="button-primary">Learn more</a>
+            </div>
+        </div>
+        <div class="tile-visual soul-demo">
+            <div class="soul-config">
+                <div class="config-item">
+                    <span class="config-label">Personality</span>
+                    <span class="config-value">"Helpful, direct, competent"</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Style</span>
+                    <span class="config-value">"Concise. Use bullet points."</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Boundaries</span>
+                    <span class="config-value">"No external API calls"</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature 3: 60+ Tools Grid -->
+    <section class="product-tile-dark-2" id="tools">
+        <div class="tile-content full-width">
+            <h2 class="display-lg">60+ tools at your fingertips</h2>
+            <p class="lead">Complete browser control with simple commands</p>
+            <p class="body-copy">From clicking buttons to blocking ads, from taking screenshots to extracting data — Iris gives you programmatic control over everything.</p>
+        </div>
+        <div class="tile-visual tools-grid-container">
+            <div class="tools-grid">
+                <div class="tool-category">
+                    <h3>Navigation</h3>
+                    <div class="tool-items">
+                        <span class="tool-tag">navigate</span>
+                        <span class="tool-tag">go_back</span>
+                        <span class="tool-tag">go_forward</span>
+                        <span class="tool-tag">reload</span>
+                        <span class="tool-tag">new_page</span>
+                    </div>
+                </div>
+                <div class="tool-category">
+                    <h3>Interaction</h3>
+                    <div class="tool-items">
+                        <span class="tool-tag">click</span>
+                        <span class="tool-tag">fill</span>
+                        <span class="tool-tag">hover</span>
+                        <span class="tool-tag">scroll</span>
+                        <span class="tool-tag">type</span>
+                    </div>
+                </div>
+                <div class="tool-category">
+                    <h3>Data</h3>
+                    <div class="tool-items">
+                        <span class="tool-tag">get_dom</span>
+                        <span class="tool-tag">search_dom</span>
+                        <span class="tool-tag">extract_data</span>
+                        <span class="tool-tag">get_links</span>
+                        <span class="tool-tag">get_images</span>
+                    </div>
+                </div>
+                <div class="tool-category">
+                    <h3>Network</h3>
+                    <div class="tool-items">
+                        <span class="tool-tag">block</span>
+                        <span class="tool-tag">mock</span>
+                        <span class="tool-tag">throttle</span>
+                        <span class="tool-tag">headers</span>
+                        <span class="tool-tag">cache</span>
+                    </div>
+                </div>
+                <div class="tool-category">
+                    <h3>Storage</h3>
+                    <div class="tool-items">
+                        <span class="tool-tag">cookies</span>
+                        <span class="tool-tag">local_storage</span>
+                        <span class="tool-tag">session_storage</span>
+                        <span class="tool-tag">get_cookies</span>
+                        <span class="tool-tag">set_cookie</span>
+                    </div>
+                </div>
+                <div class="tool-category">
+                    <h3>Media</h3>
+                    <div class="tool-items">
+                        <span class="tool-tag">screenshot</span>
+                        <span class="tool-tag">snapshot</span>
+                        <span class="tool-tag">pdf</span>
+                        <span class="tool-tag">record</span>
+                        <span class="tool-tag">download</span>
+                    </div>
+                </div>
+                <div class="tool-category">
+                    <h3>Emulation</h3>
+                    <div class="tool-items">
+                        <span class="tool-tag">viewport</span>
+                        <span class="tool-tag">device</span>
+                        <span class="tool-tag">geolocation</span>
+                        <span class="tool-tag">timezone</span>
+                        <span class="tool-tag">user_agent</span>
+                    </div>
+                </div>
+                <div class="tool-category">
+                    <h3>System</h3>
+                    <div class="tool-items">
+                        <span class="tool-tag">bookmarks</span>
+                        <span class="tool-tag">history</span>
+                        <span class="tool-tag">tabs</span>
+                        <span class="tool-tag">windows</span>
+                        <span class="tool-tag">alarms</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature 4: LLM Providers -->
+    <section class="product-tile-light" id="providers">
+        <div class="tile-content">
+            <h2 class="display-lg">Your choice of AI</h2>
+            <p class="lead">Works with OpenAI, Anthropic, Ollama, or any custom endpoint</p>
+            <p class="body-copy">Not locked in. Use any LLM provider you prefer. Full control over your data and AI costs.</p>
+            <div class="providers-showcase">
+                <div class="provider-card">
+                    <span class="provider-name">OpenAI</span>
+                    <span class="provider-model">GPT-4o</span>
+                </div>
+                <div class="provider-card">
+                    <span class="provider-name">Anthropic</span>
+                    <span class="provider-model">Claude 4</span>
+                </div>
+                <div class="provider-card">
+                    <span class="provider-name">Ollama</span>
+                    <span class="provider-model">Local</span>
+                </div>
+                <div class="provider-card">
+                    <span class="provider-name">Custom</span>
+                    <span class="provider-model">Any API</span>
+                </div>
+            </div>
+            <div class="cta-group">
+                <a href="https://github.com/GoDiao/Open-Agent-in-Browser" class="button-primary">View Docs</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="product-tile-dark cta-tile">
+        <div class="tile-content">
+            <h2 class="display-lg">Ready to try?</h2>
+            <p class="lead">Start using Iris today. It's free and open source.</p>
+            <div class="cta-group centered">
+                <a href="https://github.com/GoDiao/Open-Agent-in-Browser" class="button-primary large" target="_blank">Get Started</a>
+                <p class="caption">Open source · Free forever · No account required</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <a href="features.html">Features</a>
+                    <a href="#">Pricing</a>
+                    <a href="#">Changelog</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Documentation</h4>
+                    <a href="#">Getting Started</a>
+                    <a href="#">API Reference</a>
+                    <a href="#">Tools Guide</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Community</h4>
+                    <a href="#">GitHub</a>
+                    <a href="#">Discord</a>
+                    <a href="#">Twitter</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                    <a href="#">Security</a>
+                </div>
+            </div>
+            <div class="footer-legal">
+                <p>Copyright © 2026 Iris. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
