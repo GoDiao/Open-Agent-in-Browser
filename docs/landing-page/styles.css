@@ -286,6 +286,16 @@ body {
     color: var(--ink-muted-80);
 }
 
+/* Parchment tile text */
+.product-tile-parchment .tile-content .lead {
+    color: var(--ink);
+}
+
+.product-tile-parchment .tile-content .tagline,
+.product-tile-parchment .tile-content .body-copy {
+    color: var(--ink-muted-80);
+}
+
 /* Dark tile text colors */
 .product-tile-dark .tile-content .lead,
 .product-tile-dark-2 .tile-content .lead {
@@ -404,14 +414,14 @@ body {
 }
 
 .tool-item {
-    background: var(--surface-pearl);
+    background: #ffffff;
     color: var(--ink);
     font-size: 14px;
     font-weight: 500;
     padding: 12px 20px;
     border-radius: 8px;
     min-width: 100px;
-    border: 1px solid var(--divider-soft);
+    border: 1px solid var(--hairline);
 }
 
 /* ============================================
