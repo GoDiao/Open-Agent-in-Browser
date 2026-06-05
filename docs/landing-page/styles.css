@@ -275,14 +275,27 @@ body {
 }
 
 .tile-content .lead {
-    color: var(--body-on-dark);
+    color: var(--ink);
 }
 
 .tile-content .tagline {
-    color: var(--body-muted);
+    color: var(--ink-muted-80);
 }
 
 .tile-content .body-copy {
+    color: var(--ink-muted-80);
+}
+
+/* Dark tile text colors */
+.product-tile-dark .tile-content .lead,
+.product-tile-dark-2 .tile-content .lead {
+    color: var(--body-on-dark);
+}
+
+.product-tile-dark .tile-content .tagline,
+.product-tile-dark .tile-content .body-copy,
+.product-tile-dark-2 .tile-content .tagline,
+.product-tile-dark-2 .tile-content .body-copy {
     color: var(--body-muted);
 }
 
